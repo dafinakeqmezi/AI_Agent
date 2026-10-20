@@ -75,16 +75,39 @@ direct API runner. Grades remain provisional until human approval.
 
 ## How subscription execution works
 
-For each model step, Python starts a fresh ephemeral CLI process in an empty
-temporary working directory. The CLI receives only the role instructions and
+Before subscription inference, the runner supplies a bounded evidence packet
+(up to 120,000 serialized characters) containing the assignment materials and
+relevant project text. Small projects can submit a validated report in one model
+step, avoiding a new invocation for each file. Additional evidence can be read in
+batches of up to four files. Files omitted by the packet budget remain accessible
+through scoped reads; the packet is not treated as the complete repository.
+
+For each model step, Python starts a fresh ephemeral CLI process. One empty
+temporary working directory is reused within a phase to keep the prompt prefix
+stable; it is deleted at phase end and is never reused by another project or phase.
+The CLI receives only the role instructions and
 this phase's conversation, returning one structured action. Python executes file
 reads through the existing scoped file reader and validates submitted reports.
 The native CLI shell, file, browser, connector and plugin capabilities are disabled;
 project instructions and memories are not auto-loaded. Neither provider resumes
 an old session. Temporary structured outputs are removed after the call.
 
-This replays context through the CLI at each step and can be slower than a direct
-API run. Audit files identify `chatgpt` or `claude-code`, record usage reported by
+The named evidence packet includes the shared rules, so the model need not request
+them again. Transport JSON is decoded before building the inference prompt, avoiding
+a second layer of escaping around file contents. Agent 1 submits assessment JSON
+only; Python renders the student-facing Markdown locally without another model
+call or a duplicate generated report. Older clients that supply Markdown remain
+supported. Findings, evidence, uncertainty, integrity statements and recommendations
+are kept in the generated report.
+
+Additional steps still replay context through the CLI and can be slower than a
+direct API run. CLI process startup still occurs per inference; cache benefits
+depend on the provider and are not guaranteed. Audit files record prefetched paths, packet size and input
+characters per step so repeated context can be inspected. `transport.prompt_characters`
+records the actual CLI prompt size, and `token_totals`, `elapsed_seconds` and
+`model_calls_attempted` summarize a phase. Unreported token counts are null.
+They also identify
+`chatgpt` or `claude-code`, record usage reported by
 the CLI, and use `cli-default` when no explicit model was requested. That label
 does not identify an exact resolved model revision.
 
@@ -95,7 +118,10 @@ the runner never switches to the direct API providers. Account-level extra usage
 or credit settings are still managed by the provider; review those settings if
 you want usage to stop strictly at the included allowance.
 
-`--max-turns` bounds CLI invocations per phase. `--timeout` bounds each invocation;
+`--max-turns` bounds CLI invocations per phase; subscription runs default to 8
+instead of the direct API's 60. Increase it explicitly for a large project. The
+terminal shows the upfront packet size and requested actions, and the audit
+records per-step durations and action names. `--timeout` bounds each invocation;
 increase it (for example `--timeout 300`) if a model takes longer to produce a
 report. `--max-output-tokens` applies only to direct API calls, not CLI inference.
 The same context limit and static-review limitations apply: student code is not

@@ -82,6 +82,10 @@ The review command fetches each repo, prepares the artifacts, runs Agent 1, writ
 correct invalid JSON assessments through another tool call. `NOT_READY` is a
 valid completed review; it is not a runner failure.
 
+Agent 1 now returns its assessment once as JSON. Python renders `review.md` from
+the validated data, avoiding duplicate model-generated Markdown. Existing clients
+that send `report_md` are still accepted.
+
 Progress and report paths print in the terminal. Each run also writes
 `runner.phase1.json` with requested model, API response IDs, returned model IDs,
 usage counters, files read, limitations, and completion status. Credentials and

@@ -517,7 +517,7 @@ ul.plain li { margin: 4px 0; }
     document.getElementById("lang").textContent = T("other");
     document.getElementById("theme").textContent = T("theme");
     document.getElementById("gen").textContent = T("generated") + " " + String(D.generated_at).replace("T", " ").slice(0, 16) +
-      " UTC · " + T("rebuild") + ": python -m grader dashboard";
+      (D.live ? " UTC · Live" : " UTC · " + T("rebuild") + ": python -m grader dashboard");
   }
   function warnings(aid) {
     var list = aid ? [aid] : aids();
@@ -863,6 +863,7 @@ ul.plain li { margin: 4px 0; }
     else listView();
   }
   window.addEventListener("hashchange", function () { route(); window.scrollTo(0, 0); });
+  window.addEventListener("dashboard-data", function (event) { D = event.detail; route(); });
   route();
 })();
 </script>

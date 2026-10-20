@@ -167,6 +167,8 @@ def cmd_roster_list(a):
 
 def cmd_runner(a):
     from . import runner
+    if a.max_turns is None:
+        a.max_turns = 8 if a.provider in {"chatgpt", "claude-code"} else 60
     try:
         result = runner.run_reviews(a) if a.cmd == "review-all" else runner.run_grades(a)
     except (runner.RunnerError, ValueError, OSError) as e:
@@ -356,6 +358,10 @@ def cmd_ranking(a):
 
 
 def cmd_dashboard(a):
+    if getattr(a, "serve", False):
+        from .dashboard_server import serve
+        serve(a.port, open_browser=not a.no_open)
+        return
     out = dashboard.build(Path(a.out), open_browser=not a.no_open)
     print(f"Dashboard written: {out}")
 
@@ -392,7 +398,7 @@ def main(argv=None) -> int:
         p = sp.add_parser(name, help=description)
         p.add_argument("--provider", choices=["openai", "claude", "chatgpt", "claude-code"], default="openai")
         p.add_argument("--model", help="model ID or chosen provider's model environment variable; subscription CLIs can use their default")
-        p.add_argument("--max-turns", type=positive_int, default=60, help="maximum model calls per phase")
+        p.add_argument("--max-turns", type=positive_int, help="maximum model calls per phase (subscription default: 8; direct API: 60)")
         p.add_argument("--max-output-tokens", type=positive_int, default=12000, help="output cap per direct API call (not subscription CLI calls)")
         p.add_argument("--timeout", type=positive_int, default=120, help="request timeout in seconds")
         p.add_argument("--dry-run", action="store_true", help="check scope without API calls or starting runs")
@@ -499,6 +505,8 @@ def main(argv=None) -> int:
     p = sp.add_parser("dashboard", help="build the local read-only HTML dashboard (dashboard.html) and open it")
     p.add_argument("--out", default=str(dashboard.DEFAULT_OUT))
     p.add_argument("--no-open", action="store_true", help="do not open the browser")
+    p.add_argument("--serve", action="store_true", help="serve local controls for repos, model runs, progress and similarity")
+    p.add_argument("--port", type=int, default=0, help="live dashboard port (default: choose a free port)")
     p.set_defaults(fn=cmd_dashboard)
 
     p = sp.add_parser("check-expected", help="compare a review/evaluation run with an expected-findings file")

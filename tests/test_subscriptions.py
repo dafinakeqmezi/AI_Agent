@@ -92,6 +92,44 @@ class SubscriptionTests(unittest.TestCase):
         self.assertEqual(response["output"][0]["name"], "read_file")
         self.assertEqual(json.loads(response["output"][0]["arguments"])["path"], "project/README.md")
 
+    def test_prompt_decodes_json_packets_without_mutating_history(self):
+        source = {"prefetched_files": [{"path": "project/test.py", "text": 'L1: print("hello")\nL2: value = {"x": 1}'}]}
+        history = [{"role": "user", "content": json.dumps(source)},
+                   {"type": "function_call", "arguments": '{"paths":["project/test.py"]}'},
+                   {"type": "function_call_output", "output": '{"files":[{"text":"data"}]}'}]
+        before = json.dumps(history)
+        compact = subscriptions.compact_history(history)
+        self.assertEqual(compact[0]["content"], source)
+        self.assertEqual(compact[1]["arguments"], {"paths": ["project/test.py"]})
+        self.assertEqual(json.dumps(history), before)
+        self.assertLess(len(json.dumps(compact)), len(before))
+
+    def test_phase_reuses_working_directory_but_never_stale_outputs(self):
+        provider = self.provider("chatgpt")
+        directories = []
+
+        def execute(command, *, cwd, env, timeout, prompt):
+            directories.append(cwd)
+            self.assertFalse(Path(cwd, "action.json").exists())
+            if len(directories) != 2:
+                Path(cwd, "action.json").write_text(json.dumps({"tool": "list_files", "arguments_json": "{}"}))
+            return completed(json.dumps({"type": "turn.completed"}))
+
+        with patch.object(subscriptions, "execute", side_effect=execute):
+            provider.begin_phase()
+            first = provider.respond("rules", [], runner.tools_for("review", 1), 1000)
+            self.assertTrue(first["transport"]["stable_phase_directory"])
+            with self.assertRaises(runner.RunnerError):
+                provider.respond("rules", [], runner.tools_for("review", 1), 1000)
+            provider.end_phase()
+            self.assertFalse(Path(directories[0]).exists())
+            provider.begin_phase()
+            provider.respond("rules", [], runner.tools_for("review", 1), 1000)
+            provider.end_phase()
+        self.assertEqual(directories[0], directories[1])
+        self.assertNotEqual(directories[0], directories[2])
+        self.assertFalse(Path(directories[2]).exists())
+
     def test_claude_structured_output_and_text_fallback(self):
         provider = self.provider("claude-code")
         action = {"tool": "list_files", "arguments_json": "{}"}
@@ -151,12 +189,14 @@ class SubscriptionTests(unittest.TestCase):
         doc = {"requirements": [{"requirement_id": r["id"], "status": "MISSING", "finding": "Missing",
                                  "searched": ["README.md"]} for r in reqs],
                "integrity": {"risk_level": "NONE_FOUND", "indicators": [], "disclaimer": "Indicators only."}}
-        actions = iter([{"tool": "read_file", "arguments_json": '{"path":"project/README.md"}'},
-                        {"tool": "submit_report", "arguments_json": json.dumps({"document": doc, "report_md": "# Review"})}])
+        actions = iter([{"tool": "submit_report", "arguments_json": json.dumps({"document": doc})}])
         provider = self.provider("claude-code")
 
         def execute(command, *, cwd, env, timeout, prompt):
             self.assertNotEqual(Path(cwd), project)
+            self.assertIn("Student fixture", prompt)
+            self.assertIn("knowledge-base/policies/agent-rules.md", prompt)
+            self.assertEqual(prompt.count("# Shared agent rules"), 1)
             return completed(json.dumps({"subtype": "success", "structured_output": next(actions)}))
 
         with patch.object(subscriptions, "execute", side_effect=execute), patch.object(state, "STATE_FILE", self.root / "state.json"):
@@ -164,7 +204,39 @@ class SubscriptionTests(unittest.TestCase):
                 result = runner.session(provider, run, project, "detyra1", "review", 3, 1000)
         self.assertEqual(result["validation_errors"], [])
         self.assertEqual(load_json(run / "runner.phase1.json")["provider"], "claude-code")
+        self.assertEqual(len(load_json(run / "runner.phase1.json")["responses"]), 1)
         self.assertTrue((run / "review.md").exists())
+        self.assertIn("Rishikimi i projektit", (run / "review.md").read_text())
+        self.assertIsNone(provider._phase_directory)
+        self.assertEqual(load_json(run / "runner.phase1.json")["model_calls_attempted"], 1)
+
+    def test_prefetch_is_bounded_and_cannot_include_unmounted_reviews(self):
+        project = self.root / "project"
+        project.mkdir()
+        (project / "README.md").write_text("Student evidence")
+        outside = self.root / "review.json"
+        outside.write_text("Private Agent 1 conclusion")
+        (project / "linked.txt").symlink_to(outside)
+        files = runner.Files()
+        files.mount("project", project)
+        packet, size = runner.prefetch(files, "detyra1", budget=500)
+        self.assertLessEqual(size, 500)
+        self.assertIn("Student evidence", json.dumps(packet))
+        self.assertNotIn("Private Agent 1", json.dumps(packet))
+        self.assertNotIn("project/linked.txt", files.reads)
+        self.assertEqual(files.reads, {entry["path"] for entry in packet})
+
+    def test_batched_reads_keep_scope_and_report_each_error(self):
+        (self.root / "one.md").write_text("First file")
+        (self.root / "two.md").write_text("Second file")
+        files = runner.Files()
+        files.mount("project", self.root)
+        result = files.call("read_files", {"paths": ["project/one.md", "project/two.md", "../secret"]})
+        self.assertIn("First file", result["files"][0]["text"])
+        self.assertIn("Second file", result["files"][1]["text"])
+        self.assertIn("error", result["files"][2])
+        with self.assertRaises(ValueError):
+            files.call("read_files", {"paths": ["project/one.md"] * 5})
 
     def test_both_cli_providers_dry_run_without_install_or_login(self):
         path = self.root / "roster.json"
@@ -175,3 +247,11 @@ class SubscriptionTests(unittest.TestCase):
                     status = cli.main(["review-all", "--provider", name, "--roster", str(path), "--dry-run"])
             self.assertEqual(status, 0)
             self.assertEqual(json.loads(output.getvalue())["provider"], name)
+
+    def test_subscription_call_budget_is_lower_and_explicit_override_works(self):
+        for provider, override, expected in (("chatgpt", [], 8), ("claude-code", [], 8),
+                                              ("openai", [], 60), ("chatgpt", ["--max-turns", "3"], 3)):
+            with patch.object(runner, "run_reviews", return_value={}) as reviews:
+                with contextlib.redirect_stdout(io.StringIO()):
+                    cli.main(["review-all", "--provider", provider, "--dry-run", *override])
+            self.assertEqual(reviews.call_args.args[0].max_turns, expected)

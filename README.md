@@ -76,6 +76,11 @@ States: `DRAFT → UNDER_REVIEW → READY_FOR_FINAL_REVIEW → FINAL_SUBMISSION 
 
 ## Toolkit CLI (`python -m grader …`)
 
+Open the interactive local dashboard with `python3 -m grader dashboard --serve`.
+Add repositories, select a provider and model, run reviews, freeze and grade
+submissions, and compare frozen submissions for similarity. Saved results refresh
+automatically. See the [dashboard guide](docs/dashboard.md) for setup and controls.
+
 Add repositories through interactive input with `python3 -m grader roster add`.
 Enter the repository URL, student name, and assignment ID; repeat for each repo.
 Use `python3 -m grader roster list` to view the saved roster. See the
