@@ -1,0 +1,25 @@
+{
+  "dod_id": "AI-2026-27-DETYRA1-DOD",
+  "version": "0.1.0",
+  "status": "PLACEHOLDER",
+  "description": "Definition of Done for Detyra 1 (Agent 1 readiness).",
+  "conditions": {
+    "every_requirement_has_status": true,
+    "no_blockers": true,
+    "all_mandatory_pass": true,
+    "must_pass": [
+      "SGP-005",
+      "SUD-005",
+      "SUD-006",
+      "LAT-005"
+    ],
+    "max_partial_non_mandatory": null,
+    "integrity_must_not_be": [
+      "HIGH_CONCERN"
+    ]
+  },
+  "notes": [
+    "Every Detyra 1 requirement is listed under 'Kërkesat e detyrës', so all are mandatory.",
+    "must_pass = the three required algorithm implementations and the three Sudoku levels."
+  ]
+}

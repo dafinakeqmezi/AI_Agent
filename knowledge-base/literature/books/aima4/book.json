@@ -1,0 +1,19 @@
+{
+  "title": "Artificial Intelligence: A Modern Approach",
+  "authors": [
+    "Stuart Russell",
+    "Peter Norvig"
+  ],
+  "edition": "4th edition.",
+  "publisher": "Pearson,",
+  "year": 2021,
+  "short_cite": "Russell & Norvig (2021), AIMA 4th ed.",
+  "authority": "standard university textbook",
+  "license_note": "Copyrighted textbook. Local reference copy supplied by the course; do not redistribute or commit to git.",
+  "key": "aima4",
+  "file": "aima4.pdf",
+  "pdf_pages": 1127,
+  "sha256": "5254b4765da3412a1f3b1605c1c1c5c3cd0337c77887db71ea2cab91a87d5426",
+  "added_at": "2026-10-01T17:52:39+00:00",
+  "chapter_level": 1
+}

@@ -1,0 +1,28 @@
+{
+  "description": "Human professor grades for the benchmark set. Freeze each benchmark project (/freeze), grade it with /grade, then run /benchmark. Aim for 10-30 projects covering: excellent project, missing dataset, bad metrics, data leakage, fake references, poor documentation, missing baseline, overfitting, copied code, unreproducible results.",
+  "tolerance_fraction": 0.1,
+  "projects": [
+    {
+      "submission_id": "leaky-churn-bench",
+      "source": "examples/leaky-churn (test fixture with planted flaws)",
+      "human_total": null,
+      "human_grade": null,
+      "criteria": {},
+      "requirements": {
+        "PROB-002": "MISSING",
+        "LIT-003": "PARTIAL",
+        "DATA-001": "MISSING",
+        "DATA-004": "MISSING",
+        "METH-001": "MISSING",
+        "IMPL-002": "MISSING",
+        "IMPL-003": "PARTIAL",
+        "EXP-004": "MISSING",
+        "REPRO-001": "PARTIAL",
+        "REPRO-002": "MISSING"
+      },
+      "planted_issues": ["DATA-004", "IMPL-002", "EXP-004", "LIT-003", "METH-001", "IMPL-003", "REPRO-002"],
+      "integrity_expected": "NEEDS_REVIEW",
+      "notes": "Fill human_total/human_grade after a professor grades it by hand. Planted: scaler fit before split; report claims 5-fold CV and an LSTM that do not exist in code; implausible 99.2% accuracy; unresolvable DOI; blog reference; prompt-injection line; hardcoded path; no seed; unpinned deps."
+    }
+  ]
+}

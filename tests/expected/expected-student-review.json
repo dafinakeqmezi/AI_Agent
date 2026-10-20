@@ -1,0 +1,74 @@
+{
+  "expected_id": "EXPECTED-STUDENT-PERFORMANCE-BAD",
+  "version": "1.0.0",
+  "requirements_version": "0.2.0",
+  "project": "student-performance-bad",
+  "fixture": "sample-projects/student-performance-bad",
+  "description": "Answer key for the weak sample project. Planted: target leakage (final_exam_score is a feature and passed = final_exam_score >= 50), report claims 5-fold CV but code uses one unseeded train_test_split, 97.8% claim not produced by the code (it prints 1.0 when the path is fixed), fabricated reference (Johnson & Patel 2021, DOI 10.9999/... does not resolve), real reference cited for an unrelated claim (Breiman 2001 for a sleep/exam claim), no baseline, accuracy only on a 74/26 imbalanced target, no literature review, no limitations, hardcoded absolute path, no requirements.txt, no seed, no run instructions. The leakage is NOT detected by the deterministic scanner: only a reviewer that reads the code and data catches it.",
+  "expected_findings": [
+    {"requirement_id": "PROB-001", "label": "problem definition / research question", "status": "PARTIAL", "also_acceptable": ["MISSING"], "core": true, "why": "Goal stated ('predict if a student will pass'), but no research question or hypothesis."},
+    {"requirement_id": "PROB-002", "label": "measurable objective", "status": "MISSING", "also_acceptable": ["PARTIAL"], "why": "No target metric or success threshold defined up front."},
+    {"requirement_id": "PROB-003", "label": "inputs/outputs, why ML", "status": "MISSING", "also_acceptable": ["PARTIAL"], "why": "'AI is changing the world' is not a justification."},
+    {"requirement_id": "PROB-004", "label": "limitations", "status": "MISSING", "core": true, "why": "No scope, assumptions or limitations section."},
+
+    {"requirement_id": "LIT-001", "label": "literature review", "status": "MISSING", "core": true, "why": "No related-work section; two citations used as decoration."},
+    {"requirement_id": "LIT-002", "label": "recent literature", "status": "MISSING", "why": "The only 'recent' reference is fabricated."},
+    {"requirement_id": "LIT-003", "label": "unverifiable / unsupporting citation", "status": "BLOCKER", "core": true, "why": "Johnson & Patel (2021) does not exist (DOI unresolvable). Breiman (2001) is real but says nothing about sleep and exams."},
+    {"requirement_id": "LIT-004", "label": "research gap", "status": "MISSING", "why": "None."},
+
+    {"requirement_id": "DATA-001", "label": "dataset source and license", "status": "MISSING", "why": "No source, license or collection description."},
+    {"requirement_id": "DATA-002", "label": "dataset explanation", "status": "PARTIAL", "also_acceptable": ["MISSING"], "core": true, "why": "Columns listed, but no size or class distribution, and final_exam_score is not even mentioned."},
+    {"requirement_id": "DATA-003", "label": "data quality", "status": "PARTIAL", "also_acceptable": ["MISSING"], "why": "'Rows with missing values were removed' (8 of 240) without analysis."},
+    {"requirement_id": "DATA-004", "label": "target leakage", "status": "BLOCKER", "core": true, "why": "model.py L13 adds final_exam_score as a feature; passed is a threshold of that score."},
+    {"requirement_id": "DATA-005", "label": "bias / dataset limitations", "status": "MISSING", "why": "Not discussed despite the proposal to use the model on real students."},
+
+    {"requirement_id": "METH-001", "label": "baseline model", "status": "MISSING", "also_acceptable": ["BLOCKER"], "core": true, "why": "Only a Random Forest; no majority or simple baseline."},
+    {"requirement_id": "METH-002", "label": "model choice justified", "status": "MISSING", "also_acceptable": ["PARTIAL"], "why": "'Powerful model' and a fabricated citation."},
+    {"requirement_id": "METH-003", "label": "train/test explanation", "status": "MISSING", "also_acceptable": ["PARTIAL"], "why": "Split, preprocessing and training procedure are not described (and the described CV does not exist)."},
+    {"requirement_id": "METH-004", "label": "hyperparameters", "status": "MISSING", "also_acceptable": ["PARTIAL"], "why": "n_estimators=100 in code but not documented; no tuning rationale."},
+
+    {"requirement_id": "IMPL-001", "label": "basic ML model exists", "status": "PASS", "also_acceptable": ["PARTIAL"], "core": true, "why": "model.py trains and evaluates a classifier (runs once the path is fixed); a single flat script, so PARTIAL is also defensible."},
+    {"requirement_id": "IMPL-002", "label": "report/code inconsistency (CV)", "status": "BLOCKER", "core": true, "why": "report.md Method claims 5-fold cross-validation; model.py L16-20 is a single train_test_split."},
+    {"requirement_id": "IMPL-003", "label": "hardcoded dataset path", "status": "MISSING", "also_acceptable": ["PARTIAL"], "core": true, "why": "model.py L7 absolute path C:/Users/student/Desktop/..."},
+    {"requirement_id": "IMPL-004", "label": "code quality", "status": "MISSING", "also_acceptable": ["PARTIAL"], "why": "Flat script, no functions, no tests, chained assignment on a slice."},
+
+    {"requirement_id": "EXP-001", "label": "comparison with baseline", "status": "MISSING", "also_acceptable": ["BLOCKER"], "why": "Nothing to compare against."},
+    {"requirement_id": "EXP-002", "label": "variability / significance", "status": "MISSING", "why": "Single unseeded split."},
+    {"requirement_id": "EXP-003", "label": "ablation", "status": "NOT_APPLICABLE", "also_acceptable": ["MISSING"], "why": "Single-model approach."},
+    {"requirement_id": "EXP-004", "label": "unsupported result claims", "status": "BLOCKER", "also_acceptable": ["MISSING"], "why": "97.8% (5-fold CV) and 'better than other approaches' are not produced or supported by any code or output."},
+
+    {"requirement_id": "EVAL-001", "label": "only accuracy reported", "status": "MISSING", "also_acceptable": ["PARTIAL"], "core": true, "why": "Accuracy only, unjustified, on a 74/26 imbalanced target; no precision/recall/F1."},
+    {"requirement_id": "EVAL-002", "label": "error analysis", "status": "MISSING", "why": "No confusion matrix or failure analysis."},
+    {"requirement_id": "EVAL-003", "label": "generalization", "status": "MISSING", "why": "No train vs test comparison."},
+
+    {"requirement_id": "REPRO-001", "label": "missing requirements.txt", "status": "MISSING", "core": true, "why": "No dependency file."},
+    {"requirement_id": "REPRO-002", "label": "no random seed", "status": "MISSING", "core": true, "why": "No random_state on split or model."},
+    {"requirement_id": "REPRO-003", "label": "no reproducibility instructions", "status": "MISSING", "also_acceptable": ["PARTIAL"], "core": true, "why": "README has no run instructions; path breaks the script on any other machine."},
+    {"requirement_id": "REPRO-004", "label": "results traceable", "status": "MISSING", "why": "No saved outputs; the code prints a number that differs from the report."},
+
+    {"requirement_id": "DOC-001", "label": "poor README", "status": "MISSING", "also_acceptable": ["PARTIAL"], "core": true, "why": "Three sentences and a file list; no setup or run steps."},
+    {"requirement_id": "DOC-002", "label": "report structure", "status": "PARTIAL", "also_acceptable": ["MISSING"], "why": "Has headings but no related work, results table, discussion or limitations."},
+    {"requirement_id": "DOC-003", "label": "ethics", "status": "MISSING", "why": "Proposes flagging real students without any ethics discussion."},
+
+    {"requirement_id": "PRES-001", "label": "presentation", "status": "MISSING", "why": "No slides."},
+    {"requirement_id": "PRES-002", "label": "figures/tables", "status": "MISSING", "also_acceptable": ["PARTIAL"], "why": "No figures or tables; the single reported number does not match the code."}
+  ],
+  "not_asserted": [
+    {"requirement_id": "VCS-001", "reason": "Sample projects live inside this repository and have no git history of their own."},
+    {"requirement_id": "VCS-002", "reason": "No git history in the fixture."},
+    {"requirement_id": "VCS-003", "reason": "No git history in the fixture."},
+    {"requirement_id": "VCS-004", "reason": "No git history in the fixture."},
+    {"requirement_id": "VCS-005", "reason": "Individual project; no git history in the fixture."}
+  ],
+  "review": {
+    "readiness": "NOT_READY",
+    "integrity_risk_level": ["HIGH_CONCERN", "NEEDS_REVIEW"],
+    "min_agreement": 0.8
+  },
+  "evaluation": {
+    "total_range": [0, 35],
+    "grade_range": [5, 5],
+    "integrity_risk_level": ["HIGH_CONCERN", "NEEDS_REVIEW"],
+    "min_agreement": 0.8
+  }
+}

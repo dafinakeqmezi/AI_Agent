@@ -1,0 +1,18 @@
+{
+  "dod_id": "AIML-PROJECT-DOD",
+  "version": "0.1.0",
+  "status": "PLACEHOLDER",
+  "description": "Definition of Done used by Agent 1. A project is READY_FOR_FINAL_REVIEW only when every condition holds. Evaluated deterministically by `python -m grader readiness`.",
+  "conditions": {
+    "every_requirement_has_status": true,
+    "no_blockers": true,
+    "all_mandatory_pass": true,
+    "must_pass": ["LIT-003", "DATA-004", "IMPL-002", "EXP-004", "REPRO-001", "REPRO-003", "DOC-001"],
+    "max_partial_non_mandatory": null,
+    "integrity_must_not_be": ["HIGH_CONCERN"]
+  },
+  "notes": [
+    "must_pass covers: verified citations, no data leakage, code matches report, claims supported, reproducible environment and scripts, README.",
+    "An integrity risk level of NEEDS_REVIEW does not block readiness (it is only a signal), but HIGH_CONCERN does until a human has reviewed it."
+  ]
+}

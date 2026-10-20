@@ -1,0 +1,18 @@
+{
+  "id": "detyra1",
+  "title": "Detyra e parë semestrale: Teknikat e painformuara të kërkimit",
+  "course": "Inteligjenca Artificiale (AI) 2026/27",
+  "version": "0.1.0",
+  "status": "PLACEHOLDER",
+  "sources": [
+    "knowledge-base/course/ai-2026-27/Detyra1.md",
+    "knowledge-base/course/ai-2026-27/README-lenda.md"
+  ],
+  "guidelines": [
+    "knowledge-base/assignments/detyra1/guidelines.md"
+  ],
+  "version_control_graded": false,
+  "version_control_note": "Detyra1.md does not grade git history, so there is no VCS criterion. Commit history is still analysed for integrity indicators and the cross-student comparison (no score effect).",
+  "deliverables": "Source code for problems 1-3, documentation of modelling / representation / objective / landscape for problems 1-3, search trees for problem 4. Any language and document format.",
+  "work_mode": "individual: every student solves all four problems"
+}

@@ -1,0 +1,69 @@
+{
+  "policy_id": "VERSION-CONTROL-POLICY",
+  "version": "0.1.0",
+  "status": "PLACEHOLDER",
+  "status_note": "Thresholds and expectations for grading the git history (criterion C11). Students must be told these expectations in advance; replace with the course's announced rules.",
+  "principles": [
+    "Commit history is graded as evidence of the DEVELOPMENT PROCESS (incremental work, meaningful messages, focused commits, visible team contribution), never as a proxy for code quality.",
+    "Commit timestamps are set by the student's machine and can be changed. Deadline compliance is established by the frozen commit and, where available, by GitHub push times (activity API), not by commit dates alone.",
+    "History signals are leads, not findings. A squash-merge workflow, pair programming, or working offline and pushing later are legitimate and can produce unusual histories. Check pull requests and the report before deducting.",
+    "Commit-history patterns alone never establish misconduct (integrity indicators INT-012 to INT-015 require human review)."
+  ],
+  "thresholds": {
+    "min_commits": 10,
+    "min_active_days": 5,
+    "bulk_commit_share": 0.5,
+    "bulk_commit_files": 40,
+    "max_commit_effective_lines": 1500,
+    "last_minute_window_hours": 48,
+    "last_minute_share": 0.6,
+    "generic_message_share": 0.4,
+    "min_message_length": 10,
+    "large_file_mb": 10,
+    "author_committer_gap_days": 7,
+    "team_min_contribution_share_factor": 0.5,
+    "scc_max_snapshots": 300
+  },
+  "generic_message_patterns": [
+    "^(update|updates|updated|fix|fixes|fixed|change|changes|changed|commit|wip|test|tmp|temp|stuff|misc|minor|edit|edits|save|done|final|finished|asdf+|\\.+|-+|ok|work|progress|more|new|code|files?)\\s*\\S{0,12}$",
+    "^update [\\w./-]+$",
+    "^(add|added|create|created|delete|deleted) files? via upload$",
+    "^initial commit$",
+    "^merge branch '[^']+'( of .+)?$"
+  ],
+  "web_upload_patterns": ["^add files via upload", "^upload ", "^create [\\w./ -]+$"],
+  "ai_trailer_patterns": ["co-authored-by:.*(claude|anthropic|copilot|chatgpt|openai|gemini|cursor|devin|codeium|tabnine)", "generated with .*(claude|copilot|chatgpt|cursor)"],
+  "code_measure": "When scc is installed, code size per commit is measured with scc (code lines only: no comments, blanks, documents or data); otherwise git numstat added lines excluding the kinds/files below.",
+  "effective_lines_exclude": {
+    "kinds": ["data", "model", "image", "presentation", "notebook"],
+    "file_names": ["package-lock.json", "yarn.lock", "poetry.lock", "uv.lock", "pipfile.lock", "pnpm-lock.yaml"]
+  },
+  "grading_guidance": {
+    "VCS-001": {
+      "PASS": "Work is spread over the project period: commits on many separate days/weeks, each adding a coherent part; the history shows the project evolving (data prep, baseline, model, experiments, report).",
+      "PARTIAL": "Some incremental history, but most of the work arrives in a few large commits or in the last days before the deadline.",
+      "MISSING": "One or two bulk commits (e.g. 'Add files via upload') containing essentially the whole project."
+    },
+    "VCS-002": {
+      "PASS": "Most messages describe what changed and why ('Add stratified split and baseline logistic regression').",
+      "PARTIAL": "Mixed: many generic messages ('update', 'fix') but some descriptive ones.",
+      "MISSING": "Messages are almost all generic or meaningless."
+    },
+    "VCS-003": {
+      "PASS": "Commits are focused; no secrets, large datasets or model binaries committed; .gitignore is used.",
+      "PARTIAL": "Some oversized/mixed commits or some generated files committed.",
+      "MISSING": "Secrets or large data/model binaries in history, or commits routinely mix unrelated changes."
+    },
+    "VCS-004": {
+      "PASS": "The history shows the development the report describes (e.g. the baseline exists before the proposed model; experiments described appear as commits).",
+      "PARTIAL": "Partly consistent.",
+      "MISSING": "Report describes an iterative process that the history does not show at all."
+    },
+    "VCS-005": {
+      "PASS": "Every team member has meaningful commits/PRs and the contribution is reasonably balanced (or the imbalance is explained in the report).",
+      "PARTIAL": "A member has very little visible contribution without explanation.",
+      "MISSING": "A team member has no visible contribution.",
+      "NOT_APPLICABLE": "Individual project."
+    }
+  }
+}

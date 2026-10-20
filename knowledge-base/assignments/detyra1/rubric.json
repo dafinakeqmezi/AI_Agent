@@ -1,0 +1,71 @@
+{
+  "rubric_id": "AI-2026-27-DETYRA1-RUBRIC",
+  "version": "0.1.0",
+  "status": "PLACEHOLDER",
+  "status_note": "Criteria = the four problems of Detyra1.md. The weights (25 each) are a placeholder: the course documents give no point values.",
+  "total_points": 100,
+  "scoring": {
+    "status_credit": {
+      "PASS": 1.0,
+      "MISSING": 0.0
+    },
+    "partial_credit_levels": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "not_applicable": "Excluded from the criterion denominator. No Detyra 1 requirement may be NOT_APPLICABLE.",
+    "rounding": "Criterion scores to 2 decimals; total to 1 decimal; grade from total rounded half-up to an integer."
+  },
+  "grade_scale": {
+    "note": "PLACEHOLDER 5-10 scale (5 = fail), same as the ML project. Replace with the official conversion table.",
+    "bands": [
+      {
+        "min": 91,
+        "grade": 10
+      },
+      {
+        "min": 81,
+        "grade": 9
+      },
+      {
+        "min": 71,
+        "grade": 8
+      },
+      {
+        "min": 61,
+        "grade": 7
+      },
+      {
+        "min": 51,
+        "grade": 6
+      },
+      {
+        "min": 0,
+        "grade": 5
+      }
+    ]
+  },
+  "criteria": [
+    {
+      "id": "C1",
+      "name": "Social Golfers (DFS + backtracking)",
+      "points": 25
+    },
+    {
+      "id": "C2",
+      "name": "Sudoku (BFS + backtracking, 3 levels)",
+      "points": 25
+    },
+    {
+      "id": "C3",
+      "name": "Latin Square (IDDFS + backtracking)",
+      "points": 25
+    },
+    {
+      "id": "C4",
+      "name": "Search trees (8-Puzzle, M&C, RWS)",
+      "points": 25
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "rubric_id": "AIML-PROJECT-RUBRIC",
+  "version": "0.2.0",
+  "status": "PLACEHOLDER",
+  "status_note": "Weights are a sensible default, NOT the professor's rubric. Replace with the official course rubric before any real grading (see /import-course).",
+  "total_points": 100,
+  "scoring": {
+    "status_credit": {"PASS": 1.0, "MISSING": 0.0},
+    "partial_credit_levels": [0.25, 0.5, 0.75],
+    "not_applicable": "Excluded from the criterion denominator; the criterion score is rescaled over the applicable requirements. Only allowed when the requirement has can_be_na=true.",
+    "rounding": "Criterion scores to 2 decimals; total to 1 decimal; grade from total rounded half-up to an integer."
+  },
+  "grade_scale": {
+    "note": "PLACEHOLDER 5-10 scale (5 = fail). Replace with the university's official conversion table.",
+    "bands": [
+      {"min": 91, "grade": 10},
+      {"min": 81, "grade": 9},
+      {"min": 71, "grade": 8},
+      {"min": 61, "grade": 7},
+      {"min": 51, "grade": 6},
+      {"min": 0,  "grade": 5}
+    ]
+  },
+  "criteria": [
+    {"id": "C1",  "name": "Problem definition",       "points": 10},
+    {"id": "C2",  "name": "Literature & research",    "points": 10},
+    {"id": "C3",  "name": "Dataset & preprocessing",  "points": 10},
+    {"id": "C4",  "name": "Methodology",              "points": 12},
+    {"id": "C5",  "name": "Implementation",           "points": 12},
+    {"id": "C6",  "name": "Experiments",              "points": 11},
+    {"id": "C7",  "name": "Evaluation & analysis",    "points": 10},
+    {"id": "C8",  "name": "Reproducibility",          "points": 5},
+    {"id": "C9",  "name": "Report & documentation",   "points": 5},
+    {"id": "C10", "name": "Presentation",             "points": 5},
+    {"id": "C11", "name": "Version control & development process (git history)", "points": 10}
+  ]
+}

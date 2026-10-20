@@ -1,0 +1,316 @@
+{
+  "requirements_id": "AIML-PROJECT-REQUIREMENTS",
+  "version": "0.2.0",
+  "status": "PLACEHOLDER",
+  "status_note": "Default AI/ML project requirements. Replace or adjust with the professor's actual project requirements (see /import-course). Points per requirement sum to the rubric criterion weight.",
+  "statuses": {
+    "review": ["PASS", "PARTIAL", "MISSING", "NOT_APPLICABLE", "BLOCKER"],
+    "evaluation": ["PASS", "PARTIAL", "MISSING", "NOT_APPLICABLE"]
+  },
+  "requirements": [
+    {
+      "id": "PROB-001", "criterion_id": "C1", "category": "problem_definition",
+      "requirement": "The problem is clearly defined and an explicit research question (or hypothesis) is stated.",
+      "mandatory": true, "points": 3, "can_be_na": false, "severity_if_missing": "CRITICAL",
+      "evidence_expected": "Report introduction / proposal section stating the problem and research question.",
+      "review_checks": ["Is there a sentence a reader could answer with an experiment?", "Is the problem domain and stakeholder clear?"]
+    },
+    {
+      "id": "PROB-002", "criterion_id": "C1", "category": "problem_definition",
+      "requirement": "The objective is measurable: a target metric (and ideally a success threshold) is defined.",
+      "mandatory": true, "points": 3, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Objective statement naming the metric(s) used to judge success.",
+      "review_checks": ["Flag vague goals such as 'build an accurate model' with no metric or threshold."]
+    },
+    {
+      "id": "PROB-003", "criterion_id": "C1", "category": "problem_definition",
+      "requirement": "Inputs and outputs are identified and the need for AI/ML (versus a simpler rule-based solution) is justified.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "Description of model inputs, outputs and why ML is appropriate.",
+      "review_checks": ["Could a simple heuristic solve this? Did the student argue otherwise?"]
+    },
+    {
+      "id": "PROB-004", "criterion_id": "C1", "category": "problem_definition",
+      "requirement": "Scope, assumptions and limitations are documented.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "Scope / assumptions / limitations section.",
+      "review_checks": ["Are limitations specific to this project rather than generic?"]
+    },
+
+    {
+      "id": "LIT-001", "criterion_id": "C2", "category": "literature_review",
+      "requirement": "Relevant prior work is reviewed and synthesized (explained and compared), not merely listed.",
+      "mandatory": true, "points": 3, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Related-work section discussing prior approaches and their results.",
+      "review_checks": ["Are baseline methodology references present?", "Does the student compare approaches or only enumerate papers?"]
+    },
+    {
+      "id": "LIT-002", "criterion_id": "C2", "category": "literature_review",
+      "requirement": "Recent literature (within roughly the last 2-3 years) is considered where it exists.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "References with recent publication years relevant to the topic.",
+      "review_checks": ["Count references by year; flag if newest relevant work is old for a fast-moving topic."]
+    },
+    {
+      "id": "LIT-003", "criterion_id": "C2", "category": "literature_review",
+      "requirement": "Sources are academically credible and every citation is verifiable: it exists, its title/authors/year/DOI correspond, and it supports the claim it is cited for.",
+      "mandatory": true, "points": 3, "can_be_na": false, "severity_if_missing": "CRITICAL",
+      "evidence_expected": "Reference list; citations.json verification output.",
+      "review_checks": ["Run citation verification.", "Spot-check that cited claims match the cited paper.", "Flag blogs/unknown sites used for scientific claims."]
+    },
+    {
+      "id": "LIT-004", "criterion_id": "C2", "category": "literature_review",
+      "requirement": "A research gap is identified and the project is positioned relative to existing work.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "Statement of what is missing in prior work and how this project addresses it.",
+      "review_checks": []
+    },
+
+    {
+      "id": "DATA-001", "criterion_id": "C3", "category": "dataset",
+      "requirement": "Dataset source and license (or terms of use) are documented.",
+      "mandatory": true, "points": 2, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Data section or data/README naming the source URL/citation and license.",
+      "review_checks": ["Is the license compatible with the use?", "Is personal data involved, and is that addressed?"]
+    },
+    {
+      "id": "DATA-002", "criterion_id": "C3", "category": "dataset",
+      "requirement": "The dataset is described: size, features, target variable, and class/target distribution.",
+      "mandatory": true, "points": 2, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Dataset description table/figures; EDA notebook.",
+      "review_checks": ["Does the description match the actual data files (row counts, columns)?"]
+    },
+    {
+      "id": "DATA-003", "criterion_id": "C3", "category": "dataset",
+      "requirement": "Data quality is examined and handled: missing values, duplicates, outliers, and preprocessing steps are documented.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "EDA / preprocessing code and its description in the report.",
+      "review_checks": []
+    },
+    {
+      "id": "DATA-004", "criterion_id": "C3", "category": "dataset",
+      "requirement": "Train/validation/test splits are appropriate and there is no data leakage (preprocessing, feature selection, resampling and tuning are fit on training data only; no duplicate/group/temporal leakage).",
+      "mandatory": true, "points": 3, "can_be_na": false, "severity_if_missing": "CRITICAL",
+      "evidence_expected": "Split code and preprocessing pipeline; scan.json leakage signals.",
+      "review_checks": ["Read knowledge-base/ml-guidelines/data-leakage.md and check every leakage type listed there."]
+    },
+    {
+      "id": "DATA-005", "criterion_id": "C3", "category": "dataset",
+      "requirement": "Potential bias and dataset limitations are discussed.",
+      "mandatory": false, "points": 1, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "Limitations / bias discussion.",
+      "review_checks": []
+    },
+
+    {
+      "id": "METH-001", "criterion_id": "C4", "category": "methodology",
+      "requirement": "At least one baseline exists (e.g. trivial/majority baseline and/or a simple traditional model) for comparison with the proposed approach.",
+      "mandatory": true, "points": 4, "can_be_na": false, "severity_if_missing": "CRITICAL",
+      "evidence_expected": "Baseline implementation in code and baseline results in the report.",
+      "review_checks": ["Recommended minimum: simple baseline + traditional ML baseline + proposed approach."]
+    },
+    {
+      "id": "METH-002", "criterion_id": "C4", "category": "methodology",
+      "requirement": "The model choice is justified and alternative models were considered.",
+      "mandatory": false, "points": 3, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Methodology section explaining why the chosen model fits the problem.",
+      "review_checks": []
+    },
+    {
+      "id": "METH-003", "criterion_id": "C4", "category": "methodology",
+      "requirement": "Preprocessing, feature engineering and the training procedure are documented.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Methodology section consistent with the code.",
+      "review_checks": []
+    },
+    {
+      "id": "METH-004", "criterion_id": "C4", "category": "methodology",
+      "requirement": "Hyperparameters are documented and the tuning methodology is valid (tuned on validation data or via cross-validation, never on the test set).",
+      "mandatory": false, "points": 3, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Hyperparameter table/config and tuning code.",
+      "review_checks": ["Check that GridSearchCV/Optuna etc. never see the test set."]
+    },
+
+    {
+      "id": "IMPL-001", "criterion_id": "C5", "category": "implementation",
+      "requirement": "The implementation is complete, runs, and is structured into modules/functions (not a single monolithic notebook containing everything).",
+      "mandatory": true, "points": 3, "can_be_na": false, "severity_if_missing": "CRITICAL",
+      "evidence_expected": "Source tree, entry points, notebook structure.",
+      "review_checks": []
+    },
+    {
+      "id": "IMPL-002", "criterion_id": "C5", "category": "implementation",
+      "requirement": "The code matches the methodology described in the report (models, splits, cross-validation, metrics, preprocessing).",
+      "mandatory": true, "points": 5, "can_be_na": false, "severity_if_missing": "CRITICAL",
+      "evidence_expected": "Side-by-side comparison of report claims and code; scan.json consistency signals.",
+      "review_checks": ["Example inconsistency: report says 5-fold cross-validation, code only uses train_test_split."]
+    },
+    {
+      "id": "IMPL-003", "criterion_id": "C5", "category": "implementation",
+      "requirement": "No hardcoded absolute paths or secrets; configuration is separated from code.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "scan.json path/secret signals; config files.",
+      "review_checks": []
+    },
+    {
+      "id": "IMPL-004", "criterion_id": "C5", "category": "implementation",
+      "requirement": "Code quality: meaningful names, error handling where needed, and tests where appropriate.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "Source code, tests/ directory.",
+      "review_checks": []
+    },
+
+    {
+      "id": "EXP-001", "criterion_id": "C6", "category": "experiments",
+      "requirement": "The proposed approach is compared against the baseline(s) under controlled, identical conditions (same splits, same data, same metrics).",
+      "mandatory": true, "points": 4, "can_be_na": false, "severity_if_missing": "CRITICAL",
+      "evidence_expected": "Results table comparing models on the same test data.",
+      "review_checks": []
+    },
+    {
+      "id": "EXP-002", "criterion_id": "C6", "category": "experiments",
+      "requirement": "Variability is reported (multiple seeds/folds, standard deviation or confidence intervals) and statistical significance is assessed where appropriate.",
+      "mandatory": false, "points": 2, "can_be_na": true, "severity_if_missing": "MINOR",
+      "evidence_expected": "Mean +/- std over runs/folds; significance test where differences are small.",
+      "review_checks": ["See knowledge-base/ml-guidelines/experimental-design.md."]
+    },
+    {
+      "id": "EXP-003", "criterion_id": "C6", "category": "experiments",
+      "requirement": "An ablation study is performed where the approach has multiple components whose contribution is claimed.",
+      "mandatory": false, "points": 2, "can_be_na": true, "severity_if_missing": "MINOR",
+      "evidence_expected": "Ablation table.",
+      "review_checks": ["NOT_APPLICABLE only when the approach has no separable components."]
+    },
+    {
+      "id": "EXP-004", "criterion_id": "C6", "category": "experiments",
+      "requirement": "Every result claim in the report is supported by evidence in the submitted results/code.",
+      "mandatory": true, "points": 3, "can_be_na": false, "severity_if_missing": "CRITICAL",
+      "evidence_expected": "Claims ledger: each claim mapped to a results file / output cell.",
+      "review_checks": ["Build the claims ledger: CLAIM / EVIDENCE / STATUS (SUPPORTED, UNSUPPORTED, CONTRADICTED)."]
+    },
+
+    {
+      "id": "EVAL-001", "criterion_id": "C7", "category": "evaluation",
+      "requirement": "Evaluation metrics are appropriate for the problem (task type, class imbalance, costs of errors) and their choice is justified.",
+      "mandatory": true, "points": 4, "can_be_na": false, "severity_if_missing": "CRITICAL",
+      "evidence_expected": "Metrics section with justification.",
+      "review_checks": ["Ask 'why is this metric appropriate for this problem?', not merely whether a metric was used. See metric-selection.md."]
+    },
+    {
+      "id": "EVAL-002", "criterion_id": "C7", "category": "evaluation",
+      "requirement": "Error analysis is performed (confusion matrix, failure cases, per-class or per-segment performance).",
+      "mandatory": false, "points": 3, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Error analysis section/figures.",
+      "review_checks": []
+    },
+    {
+      "id": "EVAL-003", "criterion_id": "C7", "category": "evaluation",
+      "requirement": "Generalization is discussed: training vs validation vs test performance, overfitting/underfitting.",
+      "mandatory": false, "points": 3, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "Learning curves or train/val/test comparison.",
+      "review_checks": []
+    },
+
+    {
+      "id": "REPRO-001", "criterion_id": "C8", "category": "reproducibility",
+      "requirement": "The environment is specified with pinned dependencies (requirements.txt / environment.yml / pyproject lock) and the Python version.",
+      "mandatory": true, "points": 1, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Dependency file with pinned versions.",
+      "review_checks": []
+    },
+    {
+      "id": "REPRO-002", "criterion_id": "C8", "category": "reproducibility",
+      "requirement": "Random seeds are set and documented.",
+      "mandatory": false, "points": 1, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "Seed setting in code; scan.json seed signals.",
+      "review_checks": []
+    },
+    {
+      "id": "REPRO-003", "criterion_id": "C8", "category": "reproducibility",
+      "requirement": "Data acquisition instructions and the preprocessing, training and evaluation scripts are provided.",
+      "mandatory": true, "points": 2, "can_be_na": false, "severity_if_missing": "CRITICAL",
+      "evidence_expected": "Scripts/notebooks for each stage; data download instructions.",
+      "review_checks": []
+    },
+    {
+      "id": "REPRO-004", "criterion_id": "C8", "category": "reproducibility",
+      "requirement": "Reported results can be traced to saved experiment outputs (logs, metrics files, notebook outputs) produced by the submitted code.",
+      "mandatory": false, "points": 1, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "results/ directory, logs, executed notebook outputs.",
+      "review_checks": ["Do reported numbers match the saved outputs?"]
+    },
+
+    {
+      "id": "DOC-001", "criterion_id": "C9", "category": "documentation",
+      "requirement": "A README explains the project and gives step-by-step execution instructions.",
+      "mandatory": true, "points": 2, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "README.md with setup and run commands.",
+      "review_checks": []
+    },
+    {
+      "id": "DOC-002", "criterion_id": "C9", "category": "documentation",
+      "requirement": "The report is well structured and scientifically written (abstract, introduction, related work, method, experiments, results, discussion, conclusion, references).",
+      "mandatory": true, "points": 2, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Report file.",
+      "review_checks": []
+    },
+    {
+      "id": "DOC-003", "criterion_id": "C9", "category": "documentation",
+      "requirement": "Ethical considerations and responsible-AI aspects (fairness, privacy, misuse, environmental cost where relevant) are discussed.",
+      "mandatory": false, "points": 1, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "Ethics / responsible AI section.",
+      "review_checks": ["See knowledge-base/ml-guidelines/responsible-ai.md."]
+    },
+
+    {
+      "id": "PRES-001", "criterion_id": "C10", "category": "presentation",
+      "requirement": "A presentation is provided that covers problem, method, results and limitations.",
+      "mandatory": false, "points": 3, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "presentation/ slides.",
+      "review_checks": []
+    },
+    {
+      "id": "PRES-002", "criterion_id": "C10", "category": "presentation",
+      "requirement": "Figures and tables are accurate, labeled, and correspond to the supplied data and results.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Figures in report/slides traceable to results files.",
+      "review_checks": []
+    },
+
+    {
+      "id": "VCS-001", "criterion_id": "C11", "category": "version_control",
+      "requirement": "The project was developed incrementally in version control: the git history shows the work evolving over the project period in multiple meaningful commits, not as one or a few bulk uploads or a last-minute burst.",
+      "mandatory": true, "points": 3, "can_be_na": false, "severity_if_missing": "MAJOR",
+      "evidence_expected": "artifacts/history.md: commit count, active days/weeks, weekly timeline, bulk and last-minute signals; cite commits as (git history) / commit <sha>.",
+      "review_checks": ["Use policies/version-control-policy.json grading_guidance and thresholds.", "Check pull requests before deducting for a squash-merge workflow."]
+    },
+    {
+      "id": "VCS-002", "criterion_id": "C11", "category": "version_control",
+      "requirement": "Commit messages are descriptive: they say what changed (and why, where relevant) rather than generic messages such as 'update' or 'fix'.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "Commit list in artifacts/history.md; generic-message share.",
+      "review_checks": []
+    },
+    {
+      "id": "VCS-003", "criterion_id": "C11", "category": "version_control",
+      "requirement": "Commits are focused and the history is clean: reasonably sized commits, no secrets, no large datasets or model binaries committed, .gitignore used.",
+      "mandatory": false, "points": 2, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "history signals: oversized_commit, large_file_in_history, secret_in_history; .gitignore.",
+      "review_checks": ["A secret that was committed and later deleted is still in the history."]
+    },
+    {
+      "id": "VCS-004", "criterion_id": "C11", "category": "version_control",
+      "requirement": "The development history is consistent with the process described in the report (e.g. the baseline, experiments and iterations described appear in the history).",
+      "mandatory": false, "points": 1, "can_be_na": false, "severity_if_missing": "MINOR",
+      "evidence_expected": "Milestones in artifacts/history.md compared with the report's method/experiments sections.",
+      "review_checks": []
+    },
+    {
+      "id": "VCS-005", "criterion_id": "C11", "category": "version_control",
+      "requirement": "For team projects, each member's contribution is visible in the history (commits / pull requests) and reasonably balanced, or an imbalance is explained in the report.",
+      "mandatory": false, "points": 2, "can_be_na": true, "severity_if_missing": "MAJOR",
+      "evidence_expected": "Authors table in artifacts/history.md (mapped to GitHub logins); team list from the roster.",
+      "review_checks": ["NOT_APPLICABLE for individual projects.", "Line counts are a weak measure; also consider PRs, reviews and the report's contribution statement."]
+    }
+  ]
+}

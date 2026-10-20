@@ -1,0 +1,76 @@
+{
+  "expected_id": "EXPECTED-CHURN-PREDICTION-GOOD",
+  "version": "1.0.0",
+  "requirements_version": "0.2.0",
+  "project": "churn-prediction-good",
+  "fixture": "sample-projects/churn-prediction-good",
+  "description": "Answer key for the good sample project. A competent reviewer should find only a few minor gaps: thin literature synthesis, no research-gap statement, limited error analysis, no variability or significance testing, no unit tests and no presentation. It must NOT turn the scanner's 'cross-validation mentioned but not implemented' signal into an IMPL-002 finding: the report says cross-validation was NOT run (Limitations).",
+  "expected_findings": [
+    {"requirement_id": "PROB-001", "label": "problem definition / research question", "status": "PASS", "core": true, "why": "README + report.md section 1.2 state an explicit, testable RQ."},
+    {"requirement_id": "PROB-002", "label": "measurable objective", "status": "PASS", "core": true, "why": "report.md 1.3: primary metric F1 (churn class), threshold F1 >= 0.55."},
+    {"requirement_id": "PROB-003", "label": "inputs/outputs, why ML", "status": "PASS", "also_acceptable": ["PARTIAL"], "why": "report.md 1.4 argues against a single rule; the rule is not tested empirically."},
+    {"requirement_id": "PROB-004", "label": "scope, assumptions, limitations", "status": "PASS", "core": true, "why": "report.md 1.5 and 7 (project-specific limitations)."},
+
+    {"requirement_id": "LIT-001", "label": "literature review", "status": "PARTIAL", "core": true, "why": "Section 2 is an annotated list with one linking sentence; little synthesis or comparison."},
+    {"requirement_id": "LIT-002", "label": "recent literature", "status": "PARTIAL", "also_acceptable": ["MISSING"], "why": "Newest churn paper is 2012; only Kapoor & Narayanan 2023 is recent and it is not churn-specific."},
+    {"requirement_id": "LIT-003", "label": "verifiable citations", "status": "PASS", "core": true, "why": "All six references exist (5 DOIs resolve on Crossref; Pedregosa 2011 JMLR URL) and support the claims they are cited for."},
+    {"requirement_id": "LIT-004", "label": "research gap", "status": "PARTIAL", "also_acceptable": ["MISSING"], "why": "No explicit gap; the project is only loosely positioned ('follows this literature')."},
+
+    {"requirement_id": "DATA-001", "label": "dataset source and license", "status": "PASS", "core": true, "why": "data/README.md: synthetic, CC0, generator script included."},
+    {"requirement_id": "DATA-002", "label": "dataset documentation", "status": "PASS", "core": true, "why": "Size, columns, target and class distribution in data/README.md and report Table 1; they match the CSV."},
+    {"requirement_id": "DATA-003", "label": "data quality", "status": "PASS", "also_acceptable": ["PARTIAL"], "why": "Missing values and duplicate IDs checked and handled; outliers not discussed."},
+    {"requirement_id": "DATA-004", "label": "train/test split, no leakage", "status": "PASS", "core": true, "why": "Stratified 80/20 split, all preprocessing inside the Pipeline, no target-derived features."},
+    {"requirement_id": "DATA-005", "label": "bias and dataset limitations", "status": "PASS", "also_acceptable": ["PARTIAL"], "why": "Synthetic-data bias (favours LR) and age-group fairness discussed."},
+
+    {"requirement_id": "METH-001", "label": "baseline", "status": "PASS", "core": true, "why": "DummyClassifier (majority) + Logistic Regression baseline in src/train.py and report Table 3."},
+    {"requirement_id": "METH-002", "label": "model choice justified", "status": "PASS", "why": "report.md 4.3 justifies LR and RF."},
+    {"requirement_id": "METH-003", "label": "preprocessing/training documented", "status": "PASS", "why": "report.md 4.1-4.2 match src/preprocess.py."},
+    {"requirement_id": "METH-004", "label": "hyperparameters", "status": "PASS", "also_acceptable": ["PARTIAL"], "why": "Fixed hyperparameters documented in Table 2; no tuning, so the test set is never used for selection."},
+
+    {"requirement_id": "IMPL-001", "label": "complete, modular implementation", "status": "PASS", "why": "src/ split into preprocess/train/evaluate; runs end-to-end."},
+    {"requirement_id": "IMPL-002", "label": "code matches report", "status": "PASS", "core": true, "why": "Models, split and metrics match. Trap: the CV keyword in report.md Limitations is a negation, not a claim."},
+    {"requirement_id": "IMPL-003", "label": "no hardcoded paths", "status": "PASS", "also_acceptable": ["PARTIAL"], "why": "Paths derived from Path(__file__); no secrets. PARTIAL is defensible because seed, split size and hyperparameters are constants in code with no separate config file ('configuration is separated from code')."},
+    {"requirement_id": "IMPL-004", "label": "code quality / tests", "status": "PARTIAL", "also_acceptable": ["PASS"], "why": "Clean code and input checks, but no tests/ directory."},
+
+    {"requirement_id": "EXP-001", "label": "controlled comparison", "status": "PASS", "core": true, "why": "All models share the same split, preprocessing and metrics."},
+    {"requirement_id": "EXP-002", "label": "statistical significance / variability", "status": "MISSING", "core": true, "why": "Single split, single seed, no std/CI, no significance test; the 0.02 F1 gap is only acknowledged in Limitations."},
+    {"requirement_id": "EXP-003", "label": "ablation", "status": "NOT_APPLICABLE", "why": "No multi-component approach whose parts are claimed to contribute."},
+    {"requirement_id": "EXP-004", "label": "claims supported", "status": "PASS", "core": true, "why": "Every number in report/README is in results/metrics.json."},
+
+    {"requirement_id": "EVAL-001", "label": "evaluation metrics", "status": "PASS", "core": true, "why": "Accuracy, precision, recall, F1; section 4.4 justifies F1 under 26/74 imbalance."},
+    {"requirement_id": "EVAL-002", "label": "error analysis", "status": "PARTIAL", "core": true, "why": "Confusion matrices only; no failure cases or per-segment analysis (admitted in Limitations)."},
+    {"requirement_id": "EVAL-003", "label": "generalization", "status": "PASS", "why": "Table 5 train vs test F1; RF overfitting discussed."},
+
+    {"requirement_id": "REPRO-001", "label": "pinned environment", "status": "PASS", "core": true, "why": "requirements.txt pinned, Python version stated."},
+    {"requirement_id": "REPRO-002", "label": "random seed", "status": "PASS", "core": true, "why": "SEED = 42 passed as random_state everywhere and to default_rng."},
+    {"requirement_id": "REPRO-003", "label": "data + scripts", "status": "PASS", "core": true, "why": "make_dataset.py, preprocess.py, train.py, evaluate.py; README steps."},
+    {"requirement_id": "REPRO-004", "label": "results traceable", "status": "PASS", "core": true, "why": "results/metrics.json produced by src/evaluate.py."},
+
+    {"requirement_id": "DOC-001", "label": "README", "status": "PASS", "core": true, "why": "Purpose, structure, step-by-step commands."},
+    {"requirement_id": "DOC-002", "label": "report structure", "status": "PASS", "why": "Abstract through references."},
+    {"requirement_id": "DOC-003", "label": "ethics", "status": "PASS", "also_acceptable": ["PARTIAL"], "why": "Short but project-specific ethics section."},
+
+    {"requirement_id": "PRES-001", "label": "presentation", "status": "MISSING", "why": "No slides."},
+    {"requirement_id": "PRES-002", "label": "figures/tables accurate", "status": "PASS", "why": "All tables match results/metrics.json."}
+  ],
+  "not_asserted": [
+    {"requirement_id": "VCS-001", "reason": "Sample projects live inside this repository and have no git history of their own."},
+    {"requirement_id": "VCS-002", "reason": "No git history in the fixture."},
+    {"requirement_id": "VCS-003", "reason": "No git history in the fixture."},
+    {"requirement_id": "VCS-004", "reason": "No git history in the fixture."},
+    {"requirement_id": "VCS-005", "reason": "Individual project; no git history in the fixture."}
+  ],
+  "review": {
+    "readiness": "NOT_READY",
+    "readiness_note": "Not ready only because of the mandatory LIT-001 (PARTIAL) and VCS-001 (no git history).",
+    "integrity_risk_level": ["NONE_FOUND", "NEEDS_REVIEW"],
+    "min_agreement": 0.8
+  },
+  "evaluation": {
+    "total_range": [65, 90],
+    "grade_range": [7, 9],
+    "range_note": "C11 (10 points) is lost because the fixture has no git history, so 90 is the practical ceiling.",
+    "integrity_risk_level": ["NONE_FOUND", "NEEDS_REVIEW"],
+    "min_agreement": 0.8
+  }
+}

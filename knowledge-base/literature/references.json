@@ -1,0 +1,436 @@
+{
+  "description": "Curated, verified references the agents may cite or recommend. Every entry was checked against Crossref (DOI) or the official publisher page on the date in verified_on. Add new entries only after verifying them (python -m grader cite --doi <doi> or --title \"...\").",
+  "version": "0.2.0",
+  "references": [
+    {
+      "key": "russell2021aima",
+      "title": "Artificial Intelligence: A Modern Approach (4th ed.)",
+      "authors": [
+        "Russell, S.",
+        "Norvig, P."
+      ],
+      "year": 2021,
+      "venue": "Pearson",
+      "type": "textbook",
+      "local_copy": "knowledge-base/literature/books/aima4/ (INDEX.md, TOPICS.md, text/, aima4.pdf)",
+      "topics": [
+        "ml-foundations",
+        "model-selection",
+        "cross-validation",
+        "overfitting",
+        "deep-learning",
+        "nlp",
+        "reinforcement-learning",
+        "ai-ethics"
+      ],
+      "authority": "standard university textbook",
+      "verified_on": "2026-10-01",
+      "note": "Cite by section (e.g. §19.4.1). Copyrighted: local reference copy, not committed to git."
+    },
+    {
+      "key": "kapoor2023leakage",
+      "title": "Leakage and the reproducibility crisis in machine-learning-based science",
+      "authors": [
+        "Kapoor, S.",
+        "Narayanan, A."
+      ],
+      "year": 2023,
+      "venue": "Patterns",
+      "doi": "10.1016/j.patter.2023.100804",
+      "topics": [
+        "data-leakage",
+        "reproducibility"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "kapoor2024reforms",
+      "title": "REFORMS: Consensus-based Recommendations for Machine-learning-based Science",
+      "authors": [
+        "Kapoor, S.",
+        "Cantrell, E. M.",
+        "Peng, K.",
+        "Pham, T. H.",
+        "et al."
+      ],
+      "year": 2024,
+      "venue": "Science Advances",
+      "doi": "10.1126/sciadv.adk3452",
+      "topics": [
+        "reproducibility",
+        "reporting-checklist",
+        "data-leakage"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "kaufman2012leakage",
+      "title": "Leakage in data mining: Formulation, detection, and avoidance",
+      "authors": [
+        "Kaufman, S.",
+        "Rosset, S.",
+        "Perlich, C.",
+        "Stitelman, O."
+      ],
+      "year": 2012,
+      "venue": "ACM Transactions on Knowledge Discovery from Data",
+      "doi": "10.1145/2382577.2382579",
+      "topics": [
+        "data-leakage"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "varma2006cvbias",
+      "title": "Bias in error estimation when using cross-validation for model selection",
+      "authors": [
+        "Varma, S.",
+        "Simon, R."
+      ],
+      "year": 2006,
+      "venue": "BMC Bioinformatics",
+      "doi": "10.1186/1471-2105-7-91",
+      "topics": [
+        "cross-validation",
+        "model-selection",
+        "nested-cv"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "pineau2021reproducibility",
+      "title": "Improving Reproducibility in Machine Learning Research (A Report from the NeurIPS 2019 Reproducibility Program)",
+      "authors": [
+        "Pineau, J.",
+        "et al."
+      ],
+      "year": 2021,
+      "venue": "Journal of Machine Learning Research 22(164)",
+      "url": "https://jmlr.org/papers/v22/20-303.html",
+      "topics": [
+        "reproducibility",
+        "reporting-checklist"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "dodge2019showyourwork",
+      "title": "Show Your Work: Improved Reporting of Experimental Results",
+      "authors": [
+        "Dodge, J.",
+        "Gururangan, S.",
+        "Card, D.",
+        "Schwartz, R.",
+        "Smith, N. A."
+      ],
+      "year": 2019,
+      "venue": "EMNLP-IJCNLP 2019",
+      "doi": "10.18653/v1/D19-1224",
+      "topics": [
+        "experimental-design",
+        "hyperparameter-budget",
+        "reporting"
+      ],
+      "authority": "peer-reviewed conference",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "demsar2006comparisons",
+      "title": "Statistical Comparisons of Classifiers over Multiple Data Sets",
+      "authors": [
+        "Demšar, J."
+      ],
+      "year": 2006,
+      "venue": "Journal of Machine Learning Research 7",
+      "url": "https://jmlr.org/papers/v7/demsar06a.html",
+      "topics": [
+        "statistical-significance",
+        "experimental-design"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "dietterich1998tests",
+      "title": "Approximate Statistical Tests for Comparing Supervised Classification Learning Algorithms",
+      "authors": [
+        "Dietterich, T. G."
+      ],
+      "year": 1998,
+      "venue": "Neural Computation",
+      "doi": "10.1162/089976698300017197",
+      "topics": [
+        "statistical-significance",
+        "mcnemar",
+        "5x2cv"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "saito2015prplot",
+      "title": "The Precision-Recall Plot Is More Informative than the ROC Plot When Evaluating Binary Classifiers on Imbalanced Datasets",
+      "authors": [
+        "Saito, T.",
+        "Rehmsmeier, M."
+      ],
+      "year": 2015,
+      "venue": "PLOS ONE",
+      "doi": "10.1371/journal.pone.0118432",
+      "topics": [
+        "metrics",
+        "class-imbalance",
+        "pr-auc"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "sokolova2009measures",
+      "title": "A systematic analysis of performance measures for classification tasks",
+      "authors": [
+        "Sokolova, M.",
+        "Lapalme, G."
+      ],
+      "year": 2009,
+      "venue": "Information Processing & Management",
+      "doi": "10.1016/j.ipm.2009.03.002",
+      "topics": [
+        "metrics",
+        "classification"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "chicco2020mcc",
+      "title": "The advantages of the Matthews correlation coefficient (MCC) over F1 score and accuracy in binary classification evaluation",
+      "authors": [
+        "Chicco, D.",
+        "Jurman, G."
+      ],
+      "year": 2020,
+      "venue": "BMC Genomics",
+      "doi": "10.1186/s12864-019-6413-7",
+      "topics": [
+        "metrics",
+        "mcc",
+        "class-imbalance"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "sculley2015debt",
+      "title": "Hidden Technical Debt in Machine Learning Systems",
+      "authors": [
+        "Sculley, D.",
+        "et al."
+      ],
+      "year": 2015,
+      "venue": "Advances in Neural Information Processing Systems 28 (NeurIPS 2015)",
+      "url": "https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html",
+      "topics": [
+        "ml-engineering",
+        "code-quality"
+      ],
+      "authority": "peer-reviewed conference",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "lipton2019troubling",
+      "title": "Troubling Trends in Machine Learning Scholarship",
+      "authors": [
+        "Lipton, Z. C.",
+        "Steinhardt, J."
+      ],
+      "year": 2019,
+      "venue": "ACM Queue",
+      "doi": "10.1145/3317287.3328534",
+      "topics": [
+        "scientific-writing",
+        "unsupported-claims"
+      ],
+      "authority": "practitioner journal (ACM)",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "gebru2021datasheets",
+      "title": "Datasheets for datasets",
+      "authors": [
+        "Gebru, T.",
+        "Morgenstern, J.",
+        "Vecchione, B.",
+        "Vaughan, J. W.",
+        "et al."
+      ],
+      "year": 2021,
+      "venue": "Communications of the ACM",
+      "doi": "10.1145/3458723",
+      "topics": [
+        "dataset-documentation",
+        "responsible-ai"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "mitchell2019modelcards",
+      "title": "Model Cards for Model Reporting",
+      "authors": [
+        "Mitchell, M.",
+        "Wu, S.",
+        "Zaldivar, A.",
+        "Barnes, P.",
+        "et al."
+      ],
+      "year": 2019,
+      "venue": "Proceedings of FAT* 2019",
+      "doi": "10.1145/3287560.3287596",
+      "topics": [
+        "model-documentation",
+        "responsible-ai"
+      ],
+      "authority": "peer-reviewed conference",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "bender2021parrots",
+      "title": "On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?",
+      "authors": [
+        "Bender, E. M.",
+        "Gebru, T.",
+        "McMillan-Major, A.",
+        "Shmitchell, S."
+      ],
+      "year": 2021,
+      "venue": "Proceedings of FAccT 2021",
+      "doi": "10.1145/3442188.3445922",
+      "topics": [
+        "llm",
+        "responsible-ai"
+      ],
+      "authority": "peer-reviewed conference",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "wilkinson2016fair",
+      "title": "The FAIR Guiding Principles for scientific data management and stewardship",
+      "authors": [
+        "Wilkinson, M. D.",
+        "et al."
+      ],
+      "year": 2016,
+      "venue": "Scientific Data",
+      "doi": "10.1038/sdata.2016.18",
+      "topics": [
+        "data-management",
+        "reproducibility"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "weberwulff2023detectors",
+      "title": "Testing of detection tools for AI-generated text",
+      "authors": [
+        "Weber-Wulff, D.",
+        "Anohina-Naumeca, A.",
+        "Bjelobaba, S.",
+        "Foltýnek, T.",
+        "et al."
+      ],
+      "year": 2023,
+      "venue": "International Journal for Educational Integrity",
+      "doi": "10.1007/s40979-023-00146-z",
+      "topics": [
+        "academic-integrity",
+        "ai-detection"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "liang2023detectorbias",
+      "title": "GPT detectors are biased against non-native English writers",
+      "authors": [
+        "Liang, W.",
+        "Yuksekgonul, M.",
+        "Mao, Y.",
+        "Wu, E.",
+        "Zou, J."
+      ],
+      "year": 2023,
+      "venue": "Patterns",
+      "doi": "10.1016/j.patter.2023.100779",
+      "topics": [
+        "academic-integrity",
+        "ai-detection",
+        "bias"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "harris2020numpy",
+      "title": "Array programming with NumPy",
+      "authors": [
+        "Harris, C. R.",
+        "Millman, K. J.",
+        "van der Walt, S. J.",
+        "Gommers, R.",
+        "et al."
+      ],
+      "year": 2020,
+      "venue": "Nature",
+      "doi": "10.1038/s41586-020-2649-2",
+      "topics": [
+        "software-citation"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-01"
+    },
+    {
+      "key": "musliu2002rotating",
+      "title": "Efficient generation of rotating workforce schedules",
+      "authors": [
+        "Musliu, N.",
+        "Gärtner, J.",
+        "Slany, W."
+      ],
+      "year": 2002,
+      "venue": "Discrete Applied Mathematics 118(1-2)",
+      "doi": "10.1016/S0166-218X(01)00258-X",
+      "topics": [
+        "rotating-workforce-scheduling",
+        "search",
+        "detyra1"
+      ],
+      "authority": "peer-reviewed journal",
+      "verified_on": "2026-10-20"
+    },
+    {
+      "key": "dotu2005golfers",
+      "title": "Scheduling Social Golfers Locally",
+      "authors": [
+        "Dotú, I.",
+        "Van Hentenryck, P."
+      ],
+      "year": 2005,
+      "venue": "CPAIOR 2005, LNCS",
+      "doi": "10.1007/11493853_13",
+      "topics": [
+        "social-golfers",
+        "constraint-satisfaction",
+        "detyra1"
+      ],
+      "authority": "peer-reviewed conference",
+      "verified_on": "2026-10-20"
+    }
+  ]
+}

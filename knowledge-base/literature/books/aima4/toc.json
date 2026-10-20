@@ -1,0 +1,1864 @@
+[
+  {
+    "level": 0,
+    "number": null,
+    "title": "Preface",
+    "pdf_page": 3,
+    "end_page": 6
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Contents",
+    "pdf_page": 7,
+    "end_page": 13
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Part I: Artificial Intelligence",
+    "pdf_page": 14,
+    "end_page": 48
+  },
+  {
+    "level": 1,
+    "number": "1",
+    "title": "Introduction",
+    "pdf_page": 14,
+    "end_page": 48,
+    "text_file": "text/01-ch1-introduction.txt"
+  },
+  {
+    "level": 2,
+    "number": "1.1",
+    "title": "What Is AI?",
+    "pdf_page": 14,
+    "end_page": 17
+  },
+  {
+    "level": 2,
+    "number": "1.2",
+    "title": "The Foundations of Artificial Intelligence",
+    "pdf_page": 18,
+    "end_page": 29
+  },
+  {
+    "level": 2,
+    "number": "1.3",
+    "title": "The History of Artificial Intelligence",
+    "pdf_page": 30,
+    "end_page": 39
+  },
+  {
+    "level": 2,
+    "number": "1.4",
+    "title": "The State of the Art",
+    "pdf_page": 40,
+    "end_page": 43
+  },
+  {
+    "level": 2,
+    "number": "1.5",
+    "title": "Risks and Benefits of AI",
+    "pdf_page": 44,
+    "end_page": 46
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 47,
+    "end_page": 47
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 48,
+    "end_page": 48
+  },
+  {
+    "level": 1,
+    "number": "2",
+    "title": "Intelligent Agents",
+    "pdf_page": 49,
+    "end_page": 75,
+    "text_file": "text/02-ch2-intelligent-agents.txt"
+  },
+  {
+    "level": 2,
+    "number": "2.1",
+    "title": "Agents and Environments",
+    "pdf_page": 49,
+    "end_page": 51
+  },
+  {
+    "level": 2,
+    "number": "2.2",
+    "title": "Good Behavior: The Concept of Rationality",
+    "pdf_page": 52,
+    "end_page": 54
+  },
+  {
+    "level": 2,
+    "number": "2.3",
+    "title": "The Nature of Environments",
+    "pdf_page": 55,
+    "end_page": 59
+  },
+  {
+    "level": 2,
+    "number": "2.4",
+    "title": "The Structure of Agents",
+    "pdf_page": 60,
+    "end_page": 72
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 73,
+    "end_page": 75
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 73,
+    "end_page": 75
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Part II: Problem-solving",
+    "pdf_page": 76,
+    "end_page": 122
+  },
+  {
+    "level": 1,
+    "number": "3",
+    "title": "Solving Problems by Searching",
+    "pdf_page": 76,
+    "end_page": 122,
+    "text_file": "text/03-ch3-solving-problems-by-searching.txt"
+  },
+  {
+    "level": 2,
+    "number": "3.1",
+    "title": "Problem-Solving Agents",
+    "pdf_page": 76,
+    "end_page": 78
+  },
+  {
+    "level": 2,
+    "number": "3.2",
+    "title": "Example Problems",
+    "pdf_page": 79,
+    "end_page": 83
+  },
+  {
+    "level": 2,
+    "number": "3.3",
+    "title": "Search Algorithms",
+    "pdf_page": 84,
+    "end_page": 88
+  },
+  {
+    "level": 2,
+    "number": "3.4",
+    "title": "Uninformed Search Strategies",
+    "pdf_page": 89,
+    "end_page": 96
+  },
+  {
+    "level": 2,
+    "number": "3.5",
+    "title": "Informed (Heuristic) Search Strategies",
+    "pdf_page": 97,
+    "end_page": 109
+  },
+  {
+    "level": 2,
+    "number": "3.6",
+    "title": "Heuristic Functions",
+    "pdf_page": 110,
+    "end_page": 116
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 117,
+    "end_page": 118
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 119,
+    "end_page": 122
+  },
+  {
+    "level": 1,
+    "number": "4",
+    "title": "Search in Complex Environments",
+    "pdf_page": 123,
+    "end_page": 158,
+    "text_file": "text/04-ch4-search-in-complex-environments.txt"
+  },
+  {
+    "level": 2,
+    "number": "4.1",
+    "title": "Local Search and Optimization Problems",
+    "pdf_page": 123,
+    "end_page": 131
+  },
+  {
+    "level": 2,
+    "number": "4.2",
+    "title": "Local Search in Continuous Spaces",
+    "pdf_page": 132,
+    "end_page": 134
+  },
+  {
+    "level": 2,
+    "number": "4.3",
+    "title": "Search with Nondeterministic Actions",
+    "pdf_page": 135,
+    "end_page": 138
+  },
+  {
+    "level": 2,
+    "number": "4.4",
+    "title": "Search in Partially Observable Environments",
+    "pdf_page": 139,
+    "end_page": 146
+  },
+  {
+    "level": 2,
+    "number": "4.5",
+    "title": "Online Search Agents and Unknown Environments",
+    "pdf_page": 147,
+    "end_page": 153
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 154,
+    "end_page": 154
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 155,
+    "end_page": 158
+  },
+  {
+    "level": 1,
+    "number": "5",
+    "title": "Adversarial Search and Games",
+    "pdf_page": 159,
+    "end_page": 192,
+    "text_file": "text/05-ch5-adversarial-search-and-games.txt"
+  },
+  {
+    "level": 2,
+    "number": "5.1",
+    "title": "Game Theory",
+    "pdf_page": 159,
+    "end_page": 160
+  },
+  {
+    "level": 2,
+    "number": "5.2",
+    "title": "Optimal Decisions in Games",
+    "pdf_page": 161,
+    "end_page": 168
+  },
+  {
+    "level": 2,
+    "number": "5.3",
+    "title": "Heuristic Alpha--Beta Tree Search",
+    "pdf_page": 169,
+    "end_page": 173
+  },
+  {
+    "level": 2,
+    "number": "5.4",
+    "title": "Monte Carlo Tree Search",
+    "pdf_page": 174,
+    "end_page": 176
+  },
+  {
+    "level": 2,
+    "number": "5.5",
+    "title": "Stochastic Games",
+    "pdf_page": 177,
+    "end_page": 180
+  },
+  {
+    "level": 2,
+    "number": "5.6",
+    "title": "Partially Observable Games",
+    "pdf_page": 181,
+    "end_page": 185
+  },
+  {
+    "level": 2,
+    "number": "5.7",
+    "title": "Limitations of Game Search Algorithms",
+    "pdf_page": 186,
+    "end_page": 186
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 187,
+    "end_page": 187
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 188,
+    "end_page": 192
+  },
+  {
+    "level": 1,
+    "number": "6",
+    "title": "Constraint Satisfaction Problems",
+    "pdf_page": 193,
+    "end_page": 220,
+    "text_file": "text/06-ch6-constraint-satisfaction-problems.txt"
+  },
+  {
+    "level": 2,
+    "number": "6.1",
+    "title": "Defining Constraint Satisfaction Problems",
+    "pdf_page": 193,
+    "end_page": 197
+  },
+  {
+    "level": 2,
+    "number": "6.2",
+    "title": "Constraint Propagation: Inference in CSPs",
+    "pdf_page": 198,
+    "end_page": 203
+  },
+  {
+    "level": 2,
+    "number": "6.3",
+    "title": "Backtracking Search for CSPs",
+    "pdf_page": 204,
+    "end_page": 209
+  },
+  {
+    "level": 2,
+    "number": "6.4",
+    "title": "Local Search for CSPs",
+    "pdf_page": 210,
+    "end_page": 211
+  },
+  {
+    "level": 2,
+    "number": "6.5",
+    "title": "The Structure of Problems",
+    "pdf_page": 212,
+    "end_page": 215
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 216,
+    "end_page": 216
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 217,
+    "end_page": 220
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Part III: Knowledge, reasoning, and planning",
+    "pdf_page": 221,
+    "end_page": 263
+  },
+  {
+    "level": 1,
+    "number": "7",
+    "title": "Logical Agents",
+    "pdf_page": 221,
+    "end_page": 263,
+    "text_file": "text/07-ch7-logical-agents.txt"
+  },
+  {
+    "level": 2,
+    "number": "7.1",
+    "title": "Knowledge-Based Agents",
+    "pdf_page": 222,
+    "end_page": 222
+  },
+  {
+    "level": 2,
+    "number": "7.2",
+    "title": "The Wumpus World",
+    "pdf_page": 223,
+    "end_page": 226
+  },
+  {
+    "level": 2,
+    "number": "7.3",
+    "title": "Logic",
+    "pdf_page": 227,
+    "end_page": 229
+  },
+  {
+    "level": 2,
+    "number": "7.4",
+    "title": "Propositional Logic: A Very Simple Logic",
+    "pdf_page": 230,
+    "end_page": 234
+  },
+  {
+    "level": 2,
+    "number": "7.5",
+    "title": "Propositional Theorem Proving",
+    "pdf_page": 235,
+    "end_page": 244
+  },
+  {
+    "level": 2,
+    "number": "7.6",
+    "title": "Effective Propositional Model Checking",
+    "pdf_page": 245,
+    "end_page": 249
+  },
+  {
+    "level": 2,
+    "number": "7.7",
+    "title": "Agents Based on Propositional Logic",
+    "pdf_page": 250,
+    "end_page": 258
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 259,
+    "end_page": 259
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 260,
+    "end_page": 263
+  },
+  {
+    "level": 1,
+    "number": "8",
+    "title": "First-Order Logic",
+    "pdf_page": 264,
+    "end_page": 292,
+    "text_file": "text/08-ch8-first-order-logic.txt"
+  },
+  {
+    "level": 2,
+    "number": "8.1",
+    "title": "Representation Revisited",
+    "pdf_page": 264,
+    "end_page": 268
+  },
+  {
+    "level": 2,
+    "number": "8.2",
+    "title": "Syntax and Semantics of First-Order Logic",
+    "pdf_page": 269,
+    "end_page": 277
+  },
+  {
+    "level": 2,
+    "number": "8.3",
+    "title": "Using First-Order Logic",
+    "pdf_page": 278,
+    "end_page": 283
+  },
+  {
+    "level": 2,
+    "number": "8.4",
+    "title": "Knowledge Engineering in First-Order Logic",
+    "pdf_page": 284,
+    "end_page": 289
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 290,
+    "end_page": 290
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 291,
+    "end_page": 292
+  },
+  {
+    "level": 1,
+    "number": "9",
+    "title": "Inference in First-Order Logic",
+    "pdf_page": 293,
+    "end_page": 326,
+    "text_file": "text/09-ch9-inference-in-first-order-logic.txt"
+  },
+  {
+    "level": 2,
+    "number": "9.1",
+    "title": "Propositional vs. First-Order Inference",
+    "pdf_page": 293,
+    "end_page": 294
+  },
+  {
+    "level": 2,
+    "number": "9.2",
+    "title": "Unification and First-Order Inference",
+    "pdf_page": 295,
+    "end_page": 298
+  },
+  {
+    "level": 2,
+    "number": "9.3",
+    "title": "Forward Chaining",
+    "pdf_page": 299,
+    "end_page": 305
+  },
+  {
+    "level": 2,
+    "number": "9.4",
+    "title": "Backward Chaining",
+    "pdf_page": 306,
+    "end_page": 310
+  },
+  {
+    "level": 2,
+    "number": "9.5",
+    "title": "Resolution",
+    "pdf_page": 311,
+    "end_page": 321
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 322,
+    "end_page": 322
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 323,
+    "end_page": 326
+  },
+  {
+    "level": 1,
+    "number": "10",
+    "title": "Knowledge Representation",
+    "pdf_page": 327,
+    "end_page": 356,
+    "text_file": "text/10-ch10-knowledge-representation.txt"
+  },
+  {
+    "level": 2,
+    "number": "10.1",
+    "title": "Ontological Engineering",
+    "pdf_page": 327,
+    "end_page": 329
+  },
+  {
+    "level": 2,
+    "number": "10.2",
+    "title": "Categories and Objects",
+    "pdf_page": 330,
+    "end_page": 334
+  },
+  {
+    "level": 2,
+    "number": "10.3",
+    "title": "Events",
+    "pdf_page": 335,
+    "end_page": 338
+  },
+  {
+    "level": 2,
+    "number": "10.4",
+    "title": "Mental Objects and Modal Logic",
+    "pdf_page": 339,
+    "end_page": 341
+  },
+  {
+    "level": 2,
+    "number": "10.5",
+    "title": "Reasoning Systems for Categories",
+    "pdf_page": 342,
+    "end_page": 345
+  },
+  {
+    "level": 2,
+    "number": "10.6",
+    "title": "Reasoning with Default Information",
+    "pdf_page": 346,
+    "end_page": 349
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 350,
+    "end_page": 350
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 351,
+    "end_page": 356
+  },
+  {
+    "level": 1,
+    "number": "11",
+    "title": "Automated Planning",
+    "pdf_page": 357,
+    "end_page": 397,
+    "text_file": "text/11-ch11-automated-planning.txt"
+  },
+  {
+    "level": 2,
+    "number": "11.1",
+    "title": "Definition of Classical Planning",
+    "pdf_page": 357,
+    "end_page": 360
+  },
+  {
+    "level": 2,
+    "number": "11.2",
+    "title": "Algorithms for Classical Planning",
+    "pdf_page": 361,
+    "end_page": 365
+  },
+  {
+    "level": 2,
+    "number": "11.3",
+    "title": "Heuristics for Planning",
+    "pdf_page": 366,
+    "end_page": 368
+  },
+  {
+    "level": 2,
+    "number": "11.4",
+    "title": "Hierarchical Planning",
+    "pdf_page": 369,
+    "end_page": 377
+  },
+  {
+    "level": 2,
+    "number": "11.5",
+    "title": "Planning and Acting in Nondeterministic Domains",
+    "pdf_page": 378,
+    "end_page": 386
+  },
+  {
+    "level": 2,
+    "number": "11.6",
+    "title": "Time, Schedules, and Resources",
+    "pdf_page": 387,
+    "end_page": 390
+  },
+  {
+    "level": 2,
+    "number": "11.7",
+    "title": "Analysis of Planning Approaches",
+    "pdf_page": 391,
+    "end_page": 391
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 392,
+    "end_page": 392
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 393,
+    "end_page": 397
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Part IV: Uncertain knowledge and reasoning",
+    "pdf_page": 398,
+    "end_page": 424
+  },
+  {
+    "level": 1,
+    "number": "12",
+    "title": "Quantifying Uncertainty",
+    "pdf_page": 398,
+    "end_page": 424,
+    "text_file": "text/12-ch12-quantifying-uncertainty.txt"
+  },
+  {
+    "level": 2,
+    "number": "12.1",
+    "title": "Acting under Uncertainty",
+    "pdf_page": 398,
+    "end_page": 400
+  },
+  {
+    "level": 2,
+    "number": "12.2",
+    "title": "Basic Probability Notation",
+    "pdf_page": 401,
+    "end_page": 407
+  },
+  {
+    "level": 2,
+    "number": "12.3",
+    "title": "Inference Using Full Joint Distributions",
+    "pdf_page": 408,
+    "end_page": 409
+  },
+  {
+    "level": 2,
+    "number": "12.4",
+    "title": "Independence",
+    "pdf_page": 410,
+    "end_page": 411
+  },
+  {
+    "level": 2,
+    "number": "12.5",
+    "title": "Bayes' Rule and Its Use",
+    "pdf_page": 412,
+    "end_page": 414
+  },
+  {
+    "level": 2,
+    "number": "12.6",
+    "title": "Naive Bayes Models",
+    "pdf_page": 415,
+    "end_page": 416
+  },
+  {
+    "level": 2,
+    "number": "12.7",
+    "title": "The Wumpus World Revisited",
+    "pdf_page": 417,
+    "end_page": 419
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 420,
+    "end_page": 420
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 421,
+    "end_page": 424
+  },
+  {
+    "level": 1,
+    "number": "13",
+    "title": "Probabilistic Reasoning",
+    "pdf_page": 425,
+    "end_page": 473,
+    "text_file": "text/13-ch13-probabilistic-reasoning.txt"
+  },
+  {
+    "level": 2,
+    "number": "13.1",
+    "title": "Representing Knowledge in an Uncertain Domain",
+    "pdf_page": 425,
+    "end_page": 426
+  },
+  {
+    "level": 2,
+    "number": "13.2",
+    "title": "The Semantics of Bayesian Networks",
+    "pdf_page": 427,
+    "end_page": 439
+  },
+  {
+    "level": 2,
+    "number": "13.3",
+    "title": "Exact Inference in Bayesian Networks",
+    "pdf_page": 440,
+    "end_page": 447
+  },
+  {
+    "level": 2,
+    "number": "13.4",
+    "title": "Approximate Inference for Bayesian Networks",
+    "pdf_page": 448,
+    "end_page": 461
+  },
+  {
+    "level": 2,
+    "number": "13.5",
+    "title": "Causal Networks",
+    "pdf_page": 462,
+    "end_page": 465
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 466,
+    "end_page": 466
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 467,
+    "end_page": 473
+  },
+  {
+    "level": 1,
+    "number": "14",
+    "title": "Probabilistic Reasoning over Time",
+    "pdf_page": 474,
+    "end_page": 512,
+    "text_file": "text/14-ch14-probabilistic-reasoning-over-time.txt"
+  },
+  {
+    "level": 2,
+    "number": "14.1",
+    "title": "Time and Uncertainty",
+    "pdf_page": 474,
+    "end_page": 477
+  },
+  {
+    "level": 2,
+    "number": "14.2",
+    "title": "Inference in Temporal Models",
+    "pdf_page": 478,
+    "end_page": 485
+  },
+  {
+    "level": 2,
+    "number": "14.3",
+    "title": "Hidden Markov Models",
+    "pdf_page": 486,
+    "end_page": 491
+  },
+  {
+    "level": 2,
+    "number": "14.4",
+    "title": "Kalman Filters",
+    "pdf_page": 492,
+    "end_page": 497
+  },
+  {
+    "level": 2,
+    "number": "14.5",
+    "title": "Dynamic Bayesian Networks",
+    "pdf_page": 498,
+    "end_page": 508
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 509,
+    "end_page": 509
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 510,
+    "end_page": 512
+  },
+  {
+    "level": 1,
+    "number": "15",
+    "title": "Probabilistic Programming",
+    "pdf_page": 513,
+    "end_page": 540,
+    "text_file": "text/15-ch15-probabilistic-programming.txt"
+  },
+  {
+    "level": 2,
+    "number": "15.1",
+    "title": "Relational Probability Models",
+    "pdf_page": 514,
+    "end_page": 519
+  },
+  {
+    "level": 2,
+    "number": "15.2",
+    "title": "Open-Universe Probability Models",
+    "pdf_page": 520,
+    "end_page": 526
+  },
+  {
+    "level": 2,
+    "number": "15.3",
+    "title": "Keeping Track of a Complex World",
+    "pdf_page": 527,
+    "end_page": 531
+  },
+  {
+    "level": 2,
+    "number": "15.4",
+    "title": "Programs as Probability Models",
+    "pdf_page": 532,
+    "end_page": 535
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 536,
+    "end_page": 536
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 537,
+    "end_page": 540
+  },
+  {
+    "level": 1,
+    "number": "16",
+    "title": "Making Simple Decisions",
+    "pdf_page": 541,
+    "end_page": 574,
+    "text_file": "text/16-ch16-making-simple-decisions.txt"
+  },
+  {
+    "level": 2,
+    "number": "16.1",
+    "title": "Combining Beliefs and Desires under Uncertainty",
+    "pdf_page": 541,
+    "end_page": 541
+  },
+  {
+    "level": 2,
+    "number": "16.2",
+    "title": "The Basis of Utility Theory",
+    "pdf_page": 542,
+    "end_page": 544
+  },
+  {
+    "level": 2,
+    "number": "16.3",
+    "title": "Utility Functions",
+    "pdf_page": 545,
+    "end_page": 552
+  },
+  {
+    "level": 2,
+    "number": "16.4",
+    "title": "Multiattribute Utility Functions",
+    "pdf_page": 553,
+    "end_page": 556
+  },
+  {
+    "level": 2,
+    "number": "16.5",
+    "title": "Decision Networks",
+    "pdf_page": 557,
+    "end_page": 559
+  },
+  {
+    "level": 2,
+    "number": "16.6",
+    "title": "The Value of Information",
+    "pdf_page": 560,
+    "end_page": 565
+  },
+  {
+    "level": 2,
+    "number": "16.7",
+    "title": "Unknown Preferences",
+    "pdf_page": 566,
+    "end_page": 569
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 570,
+    "end_page": 574
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 570,
+    "end_page": 574
+  },
+  {
+    "level": 1,
+    "number": "17",
+    "title": "Making Complex Decisions",
+    "pdf_page": 575,
+    "end_page": 611,
+    "text_file": "text/17-ch17-making-complex-decisions.txt"
+  },
+  {
+    "level": 2,
+    "number": "17.1",
+    "title": "Sequential Decision Problems",
+    "pdf_page": 575,
+    "end_page": 584
+  },
+  {
+    "level": 2,
+    "number": "17.2",
+    "title": "Algorithms for MDPs",
+    "pdf_page": 585,
+    "end_page": 593
+  },
+  {
+    "level": 2,
+    "number": "17.3",
+    "title": "Bandit Problems",
+    "pdf_page": 594,
+    "end_page": 600
+  },
+  {
+    "level": 2,
+    "number": "17.4",
+    "title": "Partially Observable MDPs",
+    "pdf_page": 601,
+    "end_page": 602
+  },
+  {
+    "level": 2,
+    "number": "17.5",
+    "title": "Algorithms for Solving POMDPs",
+    "pdf_page": 603,
+    "end_page": 607
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 608,
+    "end_page": 608
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 609,
+    "end_page": 611
+  },
+  {
+    "level": 1,
+    "number": "18",
+    "title": "Multiagent Decision Making",
+    "pdf_page": 612,
+    "end_page": 663,
+    "text_file": "text/18-ch18-multiagent-decision-making.txt"
+  },
+  {
+    "level": 2,
+    "number": "18.1",
+    "title": "Properties of Multiagent Environments",
+    "pdf_page": 612,
+    "end_page": 617
+  },
+  {
+    "level": 2,
+    "number": "18.2",
+    "title": "Non-Cooperative Game Theory",
+    "pdf_page": 618,
+    "end_page": 638
+  },
+  {
+    "level": 2,
+    "number": "18.3",
+    "title": "Cooperative Game Theory",
+    "pdf_page": 639,
+    "end_page": 644
+  },
+  {
+    "level": 2,
+    "number": "18.4",
+    "title": "Making Collective Decisions",
+    "pdf_page": 645,
+    "end_page": 657
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 658,
+    "end_page": 658
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 659,
+    "end_page": 663
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Part V: Machine Learning",
+    "pdf_page": 664,
+    "end_page": 733
+  },
+  {
+    "level": 1,
+    "number": "19",
+    "title": "Learning from Examples",
+    "pdf_page": 664,
+    "end_page": 733,
+    "text_file": "text/19-ch19-learning-from-examples.txt"
+  },
+  {
+    "level": 2,
+    "number": "19.1",
+    "title": "Forms of Learning",
+    "pdf_page": 664,
+    "end_page": 665
+  },
+  {
+    "level": 2,
+    "number": "19.2",
+    "title": "Supervised Learning",
+    "pdf_page": 666,
+    "end_page": 669
+  },
+  {
+    "level": 2,
+    "number": "19.3",
+    "title": "Learning Decision Trees",
+    "pdf_page": 670,
+    "end_page": 677
+  },
+  {
+    "level": 2,
+    "number": "19.4",
+    "title": "Model Selection and Optimization",
+    "pdf_page": 678,
+    "end_page": 684
+  },
+  {
+    "level": 2,
+    "number": "19.5",
+    "title": "The Theory of Learning",
+    "pdf_page": 685,
+    "end_page": 688
+  },
+  {
+    "level": 2,
+    "number": "19.6",
+    "title": "Linear Regression and Classification",
+    "pdf_page": 689,
+    "end_page": 698
+  },
+  {
+    "level": 2,
+    "number": "19.7",
+    "title": "Nonparametric Models",
+    "pdf_page": 699,
+    "end_page": 708
+  },
+  {
+    "level": 2,
+    "number": "19.8",
+    "title": "Ensemble Learning",
+    "pdf_page": 709,
+    "end_page": 716
+  },
+  {
+    "level": 2,
+    "number": "19.9",
+    "title": "Developing Machine Learning Systems",
+    "pdf_page": 717,
+    "end_page": 726
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 727,
+    "end_page": 727
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 728,
+    "end_page": 733
+  },
+  {
+    "level": 1,
+    "number": "20",
+    "title": "Learning Probabilistic Models",
+    "pdf_page": 734,
+    "end_page": 762,
+    "text_file": "text/20-ch20-learning-probabilistic-models.txt"
+  },
+  {
+    "level": 2,
+    "number": "20.1",
+    "title": "Statistical Learning",
+    "pdf_page": 734,
+    "end_page": 736
+  },
+  {
+    "level": 2,
+    "number": "20.2",
+    "title": "Learning with Complete Data",
+    "pdf_page": 737,
+    "end_page": 749
+  },
+  {
+    "level": 2,
+    "number": "20.3",
+    "title": "Learning with Hidden Variables: The EM Algorithm",
+    "pdf_page": 750,
+    "end_page": 758
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 759,
+    "end_page": 759
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 760,
+    "end_page": 762
+  },
+  {
+    "level": 1,
+    "number": "21",
+    "title": "Deep Learning",
+    "pdf_page": 763,
+    "end_page": 801,
+    "text_file": "text/21-ch21-deep-learning.txt"
+  },
+  {
+    "level": 2,
+    "number": "21.1",
+    "title": "Simple Feedforward Networks",
+    "pdf_page": 764,
+    "end_page": 768
+  },
+  {
+    "level": 2,
+    "number": "21.2",
+    "title": "Computation Graphs for Deep Learning",
+    "pdf_page": 769,
+    "end_page": 772
+  },
+  {
+    "level": 2,
+    "number": "21.3",
+    "title": "Convolutional Networks",
+    "pdf_page": 773,
+    "end_page": 777
+  },
+  {
+    "level": 2,
+    "number": "21.4",
+    "title": "Learning Algorithms",
+    "pdf_page": 778,
+    "end_page": 780
+  },
+  {
+    "level": 2,
+    "number": "21.5",
+    "title": "Generalization",
+    "pdf_page": 781,
+    "end_page": 784
+  },
+  {
+    "level": 2,
+    "number": "21.6",
+    "title": "Recurrent Neural Networks",
+    "pdf_page": 785,
+    "end_page": 787
+  },
+  {
+    "level": 2,
+    "number": "21.7",
+    "title": "Unsupervised Learning and Transfer Learning",
+    "pdf_page": 788,
+    "end_page": 794
+  },
+  {
+    "level": 2,
+    "number": "21.8",
+    "title": "Applications",
+    "pdf_page": 795,
+    "end_page": 796
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 797,
+    "end_page": 797
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 798,
+    "end_page": 801
+  },
+  {
+    "level": 1,
+    "number": "22",
+    "title": "Reinforcement Learning",
+    "pdf_page": 802,
+    "end_page": 835,
+    "text_file": "text/22-ch22-reinforcement-learning.txt"
+  },
+  {
+    "level": 2,
+    "number": "22.1",
+    "title": "Learning from Rewards",
+    "pdf_page": 802,
+    "end_page": 803
+  },
+  {
+    "level": 2,
+    "number": "22.2",
+    "title": "Passive Reinforcement Learning",
+    "pdf_page": 804,
+    "end_page": 809
+  },
+  {
+    "level": 2,
+    "number": "22.3",
+    "title": "Active Reinforcement Learning",
+    "pdf_page": 810,
+    "end_page": 815
+  },
+  {
+    "level": 2,
+    "number": "22.4",
+    "title": "Generalization in Reinforcement Learning",
+    "pdf_page": 816,
+    "end_page": 822
+  },
+  {
+    "level": 2,
+    "number": "22.5",
+    "title": "Policy Search",
+    "pdf_page": 823,
+    "end_page": 824
+  },
+  {
+    "level": 2,
+    "number": "22.6",
+    "title": "Apprenticeship and Inverse Reinforcement Learning",
+    "pdf_page": 825,
+    "end_page": 827
+  },
+  {
+    "level": 2,
+    "number": "22.7",
+    "title": "Applications of Reinforcement Learning",
+    "pdf_page": 828,
+    "end_page": 830
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 831,
+    "end_page": 831
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 832,
+    "end_page": 835
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Part VI: Communicating, perceiving, and acting",
+    "pdf_page": 836,
+    "end_page": 868
+  },
+  {
+    "level": 1,
+    "number": "23",
+    "title": "Natural Language Processing",
+    "pdf_page": 836,
+    "end_page": 868,
+    "text_file": "text/23-ch23-natural-language-processing.txt"
+  },
+  {
+    "level": 2,
+    "number": "23.1",
+    "title": "Language Models",
+    "pdf_page": 836,
+    "end_page": 845
+  },
+  {
+    "level": 2,
+    "number": "23.2",
+    "title": "Grammar",
+    "pdf_page": 846,
+    "end_page": 847
+  },
+  {
+    "level": 2,
+    "number": "23.3",
+    "title": "Parsing",
+    "pdf_page": 848,
+    "end_page": 853
+  },
+  {
+    "level": 2,
+    "number": "23.4",
+    "title": "Augmented Grammars",
+    "pdf_page": 854,
+    "end_page": 857
+  },
+  {
+    "level": 2,
+    "number": "23.5",
+    "title": "Complications of Real Natural Language",
+    "pdf_page": 858,
+    "end_page": 861
+  },
+  {
+    "level": 2,
+    "number": "23.6",
+    "title": "Natural Language Tasks",
+    "pdf_page": 862,
+    "end_page": 862
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 863,
+    "end_page": 863
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 864,
+    "end_page": 868
+  },
+  {
+    "level": 1,
+    "number": "24",
+    "title": "Deep Learning for Natural Language Processing",
+    "pdf_page": 869,
+    "end_page": 893,
+    "text_file": "text/24-ch24-deep-learning-for-natural-language-processing.txt"
+  },
+  {
+    "level": 2,
+    "number": "24.1",
+    "title": "Word Embeddings",
+    "pdf_page": 869,
+    "end_page": 872
+  },
+  {
+    "level": 2,
+    "number": "24.2",
+    "title": "Recurrent Neural Networks for NLP",
+    "pdf_page": 873,
+    "end_page": 876
+  },
+  {
+    "level": 2,
+    "number": "24.3",
+    "title": "Sequence-to-Sequence Models",
+    "pdf_page": 877,
+    "end_page": 880
+  },
+  {
+    "level": 2,
+    "number": "24.4",
+    "title": "The Transformer Architecture",
+    "pdf_page": 881,
+    "end_page": 883
+  },
+  {
+    "level": 2,
+    "number": "24.5",
+    "title": "Pretraining and Transfer Learning",
+    "pdf_page": 884,
+    "end_page": 887
+  },
+  {
+    "level": 2,
+    "number": "24.6",
+    "title": "State of the art",
+    "pdf_page": 888,
+    "end_page": 890
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 891,
+    "end_page": 893
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 891,
+    "end_page": 893
+  },
+  {
+    "level": 1,
+    "number": "25",
+    "title": "Computer Vision",
+    "pdf_page": 894,
+    "end_page": 937,
+    "text_file": "text/25-ch25-computer-vision.txt"
+  },
+  {
+    "level": 2,
+    "number": "25.1",
+    "title": "Introduction",
+    "pdf_page": 894,
+    "end_page": 894
+  },
+  {
+    "level": 2,
+    "number": "25.2",
+    "title": "Image Formation",
+    "pdf_page": 895,
+    "end_page": 900
+  },
+  {
+    "level": 2,
+    "number": "25.3",
+    "title": "Simple Image Features",
+    "pdf_page": 901,
+    "end_page": 907
+  },
+  {
+    "level": 2,
+    "number": "25.4",
+    "title": "Classifying Images",
+    "pdf_page": 908,
+    "end_page": 911
+  },
+  {
+    "level": 2,
+    "number": "25.5",
+    "title": "Detecting Objects",
+    "pdf_page": 912,
+    "end_page": 913
+  },
+  {
+    "level": 2,
+    "number": "25.6",
+    "title": "The 3D World",
+    "pdf_page": 914,
+    "end_page": 918
+  },
+  {
+    "level": 2,
+    "number": "25.7",
+    "title": "Using Computer Vision",
+    "pdf_page": 919,
+    "end_page": 931
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 932,
+    "end_page": 932
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 933,
+    "end_page": 937
+  },
+  {
+    "level": 1,
+    "number": "26",
+    "title": "Robotics",
+    "pdf_page": 938,
+    "end_page": 993,
+    "text_file": "text/26-ch26-robotics.txt"
+  },
+  {
+    "level": 2,
+    "number": "26.1",
+    "title": "Robots",
+    "pdf_page": 938,
+    "end_page": 938
+  },
+  {
+    "level": 2,
+    "number": "26.2",
+    "title": "Robot Hardware",
+    "pdf_page": 939,
+    "end_page": 942
+  },
+  {
+    "level": 2,
+    "number": "26.3",
+    "title": "What kind of problem is robotics solving?",
+    "pdf_page": 943,
+    "end_page": 943
+  },
+  {
+    "level": 2,
+    "number": "26.4",
+    "title": "Robotic Perception",
+    "pdf_page": 944,
+    "end_page": 950
+  },
+  {
+    "level": 2,
+    "number": "26.5",
+    "title": "Planning and Control",
+    "pdf_page": 951,
+    "end_page": 968
+  },
+  {
+    "level": 2,
+    "number": "26.6",
+    "title": "Planning Uncertain Movements",
+    "pdf_page": 969,
+    "end_page": 970
+  },
+  {
+    "level": 2,
+    "number": "26.7",
+    "title": "Reinforcement Learning in Robotics",
+    "pdf_page": 971,
+    "end_page": 973
+  },
+  {
+    "level": 2,
+    "number": "26.8",
+    "title": "Humans and Robots",
+    "pdf_page": 974,
+    "end_page": 980
+  },
+  {
+    "level": 2,
+    "number": "26.9",
+    "title": "Alternative Robotic Frameworks",
+    "pdf_page": 981,
+    "end_page": 983
+  },
+  {
+    "level": 2,
+    "number": "26.10",
+    "title": "Application Domains",
+    "pdf_page": 984,
+    "end_page": 986
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 987,
+    "end_page": 987
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 988,
+    "end_page": 993
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Part VII: Conclusions",
+    "pdf_page": 994,
+    "end_page": 1024
+  },
+  {
+    "level": 1,
+    "number": "27",
+    "title": "Philosophy, Ethics, and Safety of AI",
+    "pdf_page": 994,
+    "end_page": 1024,
+    "text_file": "text/27-ch27-philosophy-ethics-and-safety-of-ai.txt"
+  },
+  {
+    "level": 2,
+    "number": "27.1",
+    "title": "The Limits of AI",
+    "pdf_page": 994,
+    "end_page": 996
+  },
+  {
+    "level": 2,
+    "number": "27.2",
+    "title": "Can Machines Really Think?",
+    "pdf_page": 997,
+    "end_page": 998
+  },
+  {
+    "level": 2,
+    "number": "27.3",
+    "title": "The Ethics of AI",
+    "pdf_page": 999,
+    "end_page": 1017
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Summary",
+    "pdf_page": 1018,
+    "end_page": 1018
+  },
+  {
+    "level": 2,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 1019,
+    "end_page": 1024
+  },
+  {
+    "level": 1,
+    "number": "28",
+    "title": "The Future of AI",
+    "pdf_page": 1025,
+    "end_page": 1035,
+    "text_file": "text/28-ch28-the-future-of-ai.txt"
+  },
+  {
+    "level": 2,
+    "number": "28.1",
+    "title": "AI Components",
+    "pdf_page": 1025,
+    "end_page": 1030
+  },
+  {
+    "level": 2,
+    "number": "28.2",
+    "title": "AI Architectures",
+    "pdf_page": 1031,
+    "end_page": 1035
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Appendix A: Mathematical Background",
+    "pdf_page": 1036,
+    "end_page": 1037
+  },
+  {
+    "level": 1,
+    "number": "A.1",
+    "title": "Complexity Analysis and O() Notation",
+    "pdf_page": 1036,
+    "end_page": 1037,
+    "text_file": "text/29-chA.1-complexity-analysis-and-o-notation.txt"
+  },
+  {
+    "level": 1,
+    "number": "A.2",
+    "title": "Vectors, Matrices, and Linear Algebra",
+    "pdf_page": 1038,
+    "end_page": 1039,
+    "text_file": "text/30-chA.2-vectors-matrices-and-linear-algebra.txt"
+  },
+  {
+    "level": 1,
+    "number": "A.3",
+    "title": "Probability Distributions",
+    "pdf_page": 1040,
+    "end_page": 1041,
+    "text_file": "text/31-chA.3-probability-distributions.txt"
+  },
+  {
+    "level": 1,
+    "number": null,
+    "title": "Bibliographical and Historical Notes",
+    "pdf_page": 1042,
+    "end_page": 1042,
+    "text_file": "text/32-bibliographical-and-historical-notes.txt"
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Appendix B: Notes on Languages and Algorithms",
+    "pdf_page": 1043,
+    "end_page": 1043
+  },
+  {
+    "level": 1,
+    "number": "B.1",
+    "title": "Defining Languages with Backus--Naur Form (BNF)",
+    "pdf_page": 1043,
+    "end_page": 1043,
+    "text_file": "text/33-chB.1-defining-languages-with-backus-naur-form-bnf.txt"
+  },
+  {
+    "level": 1,
+    "number": "B.2",
+    "title": "Describing Algorithms with Pseudocode",
+    "pdf_page": 1044,
+    "end_page": 1044,
+    "text_file": "text/34-chB.2-describing-algorithms-with-pseudocode.txt"
+  },
+  {
+    "level": 1,
+    "number": "B.3",
+    "title": "Online Supplemental Material",
+    "pdf_page": 1045,
+    "end_page": 1045,
+    "text_file": "text/35-chB.3-online-supplemental-material.txt"
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Bibliography",
+    "pdf_page": 1046,
+    "end_page": 1080
+  },
+  {
+    "level": 0,
+    "number": null,
+    "title": "Index",
+    "pdf_page": 1081,
+    "end_page": 1127
+  }
+]

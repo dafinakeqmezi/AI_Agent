@@ -1,0 +1,28 @@
+{
+  "knowledge_base_version": "0.3.0",
+  "status": "PLACEHOLDER",
+  "updated": "2026-10-20",
+  "changelog": [
+    {
+      "version": "0.1.0",
+      "date": "2026-10-01",
+      "change": "Initial knowledge base: placeholder requirements/rubric/DoD/integrity policy, ML guidelines, 20 verified references."
+    },
+    {
+      "version": "0.2.0",
+      "date": "2026-10-01",
+      "change": "Added criterion C11 (version control & development process, VCS-001..005) with rebalanced C4/C5/C6 points; version-control policy; integrity indicators INT-013..015; AIMA 4th ed. textbook (indexed, topic map)."
+    },
+    {
+      "version": "0.2.1",
+      "date": "2026-10-08",
+      "change": "Agent identities: Ada (AI/ML Project Supervisor, Agent 1) and Prof. Vale (Examining Professor, Agent 2) in identities.json; identity rule in agent-rules.md."
+    },
+    {
+      "version": "0.3.0",
+      "date": "2026-10-20",
+      "change": "Multiple assignments: knowledge-base/assignments/<id>/ (the ML project stays the default 'ml-project'). New assignment 'detyra1' (AI 2026/27, uninformed search) from course/ai-2026-27/Detyra1.md: requirements SGP/SUD/LAT/TREE, rubric C1-C4 (25 each, PLACEHOLDER weights), DoD, guidelines. Course documents added under course/ai-2026-27/. Two verified references (Musliu 2002, Dotú 2005). Integrity policy 0.3.0: INT-016 (shared code/text between students), INT-017 (shared git history/authorship between students), cross_submission_similarity thresholds (PLACEHOLDER)."
+    }
+  ],
+  "note": "Bump knowledge_base_version whenever any file under knowledge-base/ changes. The exact content hash is recorded in every review and evaluation automatically (python -m grader versions)."
+}

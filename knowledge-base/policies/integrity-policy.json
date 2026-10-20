@@ -1,0 +1,150 @@
+{
+  "policy_id": "ACADEMIC-INTEGRITY-REVIEW",
+  "version": "0.3.0",
+  "status": "PLACEHOLDER",
+  "status_note": "Replace the AI-usage and plagiarism rules with the university/course policy. The principles section is fixed design and should not be weakened.",
+  "principles": [
+    "Agents identify academic-integrity RISK INDICATORS and EVIDENCE requiring human review. They never determine that misconduct occurred.",
+    "AI-generated-text detection cannot alone establish misconduct. Detectors have documented low accuracy and bias (see knowledge-base/literature/references.json: Weber-Wulff et al. 2023; Liang et al. 2023). Agents must not use 'this sounds AI-written' as an indicator.",
+    "Integrity findings never change a score automatically. Only the professor can act on them.",
+    "Every indicator must cite concrete, checkable evidence (file + location, or a failed verification result)."
+  ],
+  "risk_levels": {
+    "NONE_FOUND": "No indicators found. This is not a certification of integrity.",
+    "NEEDS_REVIEW": "One or more indicators that may have innocent explanations (e.g. a reference that could not be verified automatically).",
+    "HIGH_CONCERN": "Multiple or strong indicators (e.g. fabricated references AND results that contradict the supplied code). Human review required before grading is finalized."
+  },
+  "mandatory_disclaimer": "This review identifies risk indicators only. It does NOT establish misconduct. Human review is required before any action is taken.",
+  "indicators": [
+    {
+      "id": "INT-001",
+      "name": "Citation does not exist",
+      "how_to_check": "Citation verification (DOI/Crossref/arXiv/title search) fails and a manual web search also fails."
+    },
+    {
+      "id": "INT-002",
+      "name": "Citation does not support the claim",
+      "how_to_check": "Cited paper's abstract/content contradicts or is unrelated to the claim."
+    },
+    {
+      "id": "INT-003",
+      "name": "Copied passages / identical unusual wording",
+      "how_to_check": "Exact unusual phrasing found in an external source without quotation/citation."
+    },
+    {
+      "id": "INT-004",
+      "name": "Code copied without attribution",
+      "how_to_check": "Distinctive code matching a public source (tutorial, repo) with no attribution."
+    },
+    {
+      "id": "INT-005",
+      "name": "Report describes code that does not exist",
+      "how_to_check": "Model/component described in the report has no implementation in the submission."
+    },
+    {
+      "id": "INT-006",
+      "name": "Results cannot be reproduced / contradict outputs",
+      "how_to_check": "Reported metric differs from saved outputs or from what the supplied evaluation code produces."
+    },
+    {
+      "id": "INT-007",
+      "name": "Figures do not correspond to supplied data",
+      "how_to_check": "Plotted values/ranges inconsistent with the data/results files."
+    },
+    {
+      "id": "INT-008",
+      "name": "Implausible metrics",
+      "how_to_check": "Near-perfect metrics on a hard task without explanation; check for leakage first (often an innocent mistake)."
+    },
+    {
+      "id": "INT-009",
+      "name": "Fabricated references",
+      "how_to_check": "Reference with mismatched DOI/title/authors or a non-existent venue."
+    },
+    {
+      "id": "INT-010",
+      "name": "Dataset description inconsistent with dataset",
+      "how_to_check": "Row counts, columns or classes differ from the supplied data."
+    },
+    {
+      "id": "INT-011",
+      "name": "Architecture inconsistent between code and report",
+      "how_to_check": "Layer types/sizes/hyperparameters differ."
+    },
+    {
+      "id": "INT-012",
+      "name": "Commit history inconsistent with project narrative",
+      "how_to_check": "artifacts/history.md: e.g. the entire project added in one bulk commit right before the deadline while the report describes months of iteration. Weak signal on its own (students may work offline and push late)."
+    },
+    {
+      "id": "INT-013",
+      "name": "History rewritten",
+      "how_to_check": "GitHub activity shows force-pushes (history.json github.force_pushes), or large author/committer date gaps. Often innocent (rebase, amend); only relevant together with other indicators."
+    },
+    {
+      "id": "INT-014",
+      "name": "Imported or foreign history",
+      "how_to_check": "The repo is a fork of / was created from someone else's project, or contains substantial commits authored by people outside the team or before the course started. Check the upstream to separate the student's own commits."
+    },
+    {
+      "id": "INT-015",
+      "name": "Pushed after the deadline",
+      "how_to_check": "The frozen commit carries a timestamp before the deadline but GitHub's activity log shows it was first pushed after the deadline (history.json github.frozen_commit_pushed_at)."
+    },
+    {
+      "id": "INT-016",
+      "name": "Shared code or text between students' submissions",
+      "how_to_check": "Class similarity report (python -m grader similarity): matched code/document regions between two submissions after removing fragments common to many submissions and the professor's base code. Compare the matched regions themselves and who had them first (commit dates). Short standard algorithms (textbook backtracking) are naturally similar; only distinctive shared regions count."
+    },
+    {
+      "id": "INT-017",
+      "name": "Shared git history or authorship between students' repositories",
+      "how_to_check": "Similarity report 'git' section: identical commit SHAs (copied history), commits in one student's repo authored by another student's identity, identical non-trivial files, identical non-generic commit messages. Pair programming or an allowed group may explain it; the professor decides."
+    }
+  ],
+  "ai_usage_policy": {
+    "status": "PLACEHOLDER",
+    "allowed": [
+      "Using AI assistants for debugging, explanation and language editing, if disclosed."
+    ],
+    "requires_disclosure": true,
+    "disclosure_location": "An 'AI usage' statement in the report or README.",
+    "not_allowed": [
+      "Submitting AI-generated text or code as one's own without disclosure, where the course forbids it.",
+      "AI-fabricated references."
+    ]
+  },
+  "cross_submission_similarity": {
+    "status": "PLACEHOLDER",
+    "note": "Thresholds for the class similarity report. Containment = shared fingerprints / fingerprints of the smaller submission (MOSS-like). Levels are review priorities, not findings.",
+    "code_k_tokens": 12,
+    "code_window": 8,
+    "doc_k_words": 8,
+    "doc_window": 6,
+    "common_fraction": 0.5,
+    "common_min_submissions": 4,
+    "min_identical_file_bytes": 200,
+    "levels": {
+      "HIGH": {
+        "code_containment": 0.6,
+        "doc_containment": 0.6
+      },
+      "MEDIUM": {
+        "code_containment": 0.35,
+        "doc_containment": 0.35
+      },
+      "LOW": {
+        "code_containment": 0.2,
+        "doc_containment": 0.2
+      }
+    },
+    "always_high": [
+      "shared_commits",
+      "foreign_identity_commits"
+    ],
+    "at_least_medium": [
+      "identical_files",
+      "shared_commit_messages"
+    ]
+  }
+}

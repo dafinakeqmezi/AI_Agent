@@ -1,0 +1,337 @@
+{
+  "requirements_id": "AI-2026-27-DETYRA1-REQUIREMENTS",
+  "version": "0.1.0",
+  "status": "PLACEHOLDER",
+  "status_note": "Requirements come from Detyra1.md (see each 'source'). Point values are NOT in the course documents: 25 points per problem, split within each problem, chosen with the user on 2026-10-20 as a placeholder until the professor confirms them.",
+  "statuses": {
+    "review": [
+      "PASS",
+      "PARTIAL",
+      "MISSING",
+      "NOT_APPLICABLE",
+      "BLOCKER"
+    ],
+    "evaluation": [
+      "PASS",
+      "PARTIAL",
+      "MISSING",
+      "NOT_APPLICABLE"
+    ]
+  },
+  "requirements": [
+    {
+      "id": "SGP-001",
+      "criterion_id": "C1",
+      "category": "social_golfers",
+      "requirement": "Social Golfers: the problem is modelled (what is given, what is sought, the constraints).",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §1 (Social Golfers), 'Kërkesat e detyrës': 'Modeloni problemin'",
+      "evidence_expected": "Documentation section modelling the problem.",
+      "review_checks": [
+        "Given n = g x p players and w weeks: each week every player plays exactly once in exactly one group of p; any two players share a group at most once. Question: the maximum w (for 8-4: at most 10).",
+        "See knowledge-base/assignments/detyra1/guidelines.md §Social Golfers."
+      ]
+    },
+    {
+      "id": "SGP-002",
+      "criterion_id": "C1",
+      "category": "social_golfers",
+      "requirement": "Social Golfers: the problem representation is stated: variables, domains and constraints (and the solution representation).",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §1 (Social Golfers), 'Kërkesat e detyrës': 'Tregoni reprezentimin e problemit (çka konsiderojme variabel, domain, etj.)'",
+      "evidence_expected": "Documentation naming the variables, their domains and the constraints; the code's data structures should match.",
+      "review_checks": [
+        "Typical: variable x[w][g][k] in {0..31} (player in slot k of group g in week w), or a group per player per week. Hard constraints: each player once per week; each pair meets at most once.",
+        "Does the representation in the documentation match the data structures in the code?"
+      ]
+    },
+    {
+      "id": "SGP-003",
+      "criterion_id": "C1",
+      "category": "social_golfers",
+      "requirement": "Social Golfers: an objective function is formulated.",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §1 (Social Golfers), 'Kërkesat e detyrës': 'Formuloni Objective function'",
+      "evidence_expected": "A formula or precise definition of the objective/evaluation function and what value means 'solved'.",
+      "review_checks": [
+        "Typical: f = number of repeated pair meetings (sum over pairs of max(0, meetings - 1)); goal f = 0; or maximise the number of weeks w with f = 0.",
+        "Is it a function of a (complete or partial) candidate solution, and is the goal value stated?"
+      ]
+    },
+    {
+      "id": "SGP-004",
+      "criterion_id": "C1",
+      "category": "social_golfers",
+      "requirement": "Social Golfers: the landscape (size of the search space) is calculated for the chosen representation.",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §1 (Social Golfers), 'Kërkesat e detyrës': 'Kalkuloni landscape'",
+      "evidence_expected": "A calculation with the derivation, consistent with the stated representation.",
+      "review_checks": [
+        "Per week, 32 players into 8 unlabelled groups of 4: 32!/((4!)^8 * 8!) = 59,287,247,761,257,140,625 (about 5.93e19); labelled groups 32!/(4!)^8 (about 2.39e24); naive permutation 32! (about 2.63e35); for w weeks raise to the power w.",
+        "The number must follow from the student's own representation; check the arithmetic. A correct derivation for a different but stated representation is acceptable."
+      ]
+    },
+    {
+      "id": "SGP-005",
+      "criterion_id": "C1",
+      "category": "social_golfers",
+      "requirement": "Social Golfers: Depth First Search (DFS) with backtracking is implemented, runs, and finds correct solutions.",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "CRITICAL",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §1 (Social Golfers), 'Kërkesat e detyrës': 'Implemento Depth First Search (DFS) with backtracking'",
+      "evidence_expected": "Source code of the algorithm; a run (or saved output) on the problem instance; a check that the output satisfies all constraints.",
+      "review_checks": [
+        "DFS: recursion or an explicit LIFO stack; children explored depth-first.",
+        "Backtracking: a partial schedule is extended only if no pair has already met (check before descending) and the assignment is undone on return.",
+        "Instance: n = 32 players, g = 8 groups of p = 4. Report how many weeks w the program schedules (upper bound w <= floor(31/3) = 10). A DFS that schedules fewer weeks within a stated time limit is acceptable if reported honestly.",
+        "Run the code with a timeout on the stated instance(s) and verify every constraint of the output with an independent checker.",
+        "A different algorithm labelled with the required name is MISSING for this requirement, not PARTIAL."
+      ]
+    },
+    {
+      "id": "SUD-001",
+      "criterion_id": "C2",
+      "category": "sudoku",
+      "requirement": "Sudoku: the problem is modelled (what is given, what is sought, the constraints).",
+      "mandatory": true,
+      "points": 4,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §2 (Sudoku), 'Kërkesat e detyrës': 'Modeloni problemin'",
+      "evidence_expected": "Documentation section modelling the problem.",
+      "review_checks": [
+        "Given a partially filled 9x9 grid: fill the empty cells with 1-9 so that each row, column and 3x3 box contains every digit exactly once; the givens may not change.",
+        "See knowledge-base/assignments/detyra1/guidelines.md §Sudoku."
+      ]
+    },
+    {
+      "id": "SUD-002",
+      "criterion_id": "C2",
+      "category": "sudoku",
+      "requirement": "Sudoku: the problem representation is stated: variables, domains and constraints (and the solution representation).",
+      "mandatory": true,
+      "points": 4,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §2 (Sudoku), 'Kërkesat e detyrës': 'Tregoni reprezentimin e problemit (çka konsiderojme variabel, domain, etj.)'",
+      "evidence_expected": "Documentation naming the variables, their domains and the constraints; the code's data structures should match.",
+      "review_checks": [
+        "Typical: one variable per empty cell, domain {1..9}, all-different constraints on rows, columns and boxes.",
+        "Does the representation in the documentation match the data structures in the code?"
+      ]
+    },
+    {
+      "id": "SUD-003",
+      "criterion_id": "C2",
+      "category": "sudoku",
+      "requirement": "Sudoku: an objective function is formulated.",
+      "mandatory": true,
+      "points": 4,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §2 (Sudoku), 'Kërkesat e detyrës': 'Formuloni Objective function'",
+      "evidence_expected": "A formula or precise definition of the objective/evaluation function and what value means 'solved'.",
+      "review_checks": [
+        "Typical: f = number of constraint violations (duplicate digits in rows + columns + boxes); goal f = 0.",
+        "Is it a function of a (complete or partial) candidate solution, and is the goal value stated?"
+      ]
+    },
+    {
+      "id": "SUD-004",
+      "criterion_id": "C2",
+      "category": "sudoku",
+      "requirement": "Sudoku: the landscape (size of the search space) is calculated for the chosen representation.",
+      "mandatory": true,
+      "points": 4,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §2 (Sudoku), 'Kërkesat e detyrës': 'Kalkuloni landscape'",
+      "evidence_expected": "A calculation with the derivation, consistent with the stated representation.",
+      "review_checks": [
+        "Naive 9^81 (about 1.97e77); with the givens fixed: 9^(number of empty cells) for the puzzle; row-permutation representation (9!)^9 (about 1.09e50); valid complete grids 6,670,903,752,021,072,936,960 (context only).",
+        "The number must follow from the student's own representation; check the arithmetic. A correct derivation for a different but stated representation is acceptable."
+      ]
+    },
+    {
+      "id": "SUD-005",
+      "criterion_id": "C2",
+      "category": "sudoku",
+      "requirement": "Sudoku: Breadth First Search (BFS) with backtracking is implemented, runs, and finds correct solutions.",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "CRITICAL",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §2 (Sudoku), 'Kërkesat e detyrës': 'Implemento Breadth First Search (BFS) with backtracking'",
+      "evidence_expected": "Source code of the algorithm; a run (or saved output) on the problem instance; a check that the output satisfies all constraints.",
+      "review_checks": [
+        "BFS: an explicit FIFO frontier (collections.deque with popleft, queue.Queue) expanding partial grids level by level (one more cell filled per level).",
+        "Backtracking/pruning: a child grid is generated only if the new value violates no row, column or 3x3-box constraint; inconsistent partial grids are discarded.",
+        "A recursive DFS labelled 'BFS' does not satisfy this requirement.",
+        "Run the code with a timeout on the stated instance(s) and verify every constraint of the output with an independent checker.",
+        "A different algorithm labelled with the required name is MISSING for this requirement, not PARTIAL."
+      ]
+    },
+    {
+      "id": "SUD-006",
+      "criterion_id": "C2",
+      "category": "sudoku",
+      "requirement": "Sudoku: the program handles three difficulty levels, Easy, Medium and Hard (e.g. one or more puzzles per level), and they are demonstrated.",
+      "mandatory": true,
+      "points": 4,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §2 (Sudoku), 'Përshkrimi': 'Programi duhet t’i parasheh tri nivele të Sudoku: Easy, Medium, Hard.'",
+      "evidence_expected": "Puzzles or a level selector for Easy, Medium and Hard; runs/outputs for each level.",
+      "review_checks": [
+        "Are there puzzles (or generation) for all three levels, and does the program solve each?",
+        "Report run time or nodes expanded per level if available; Hard puzzles can make plain BFS slow, so run with a timeout and report honestly."
+      ]
+    },
+    {
+      "id": "LAT-001",
+      "criterion_id": "C3",
+      "category": "latin_square",
+      "requirement": "Latin Square: the problem is modelled (what is given, what is sought, the constraints).",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §3 (Latin Square), 'Kërkesat e detyrës': 'Modeloni problemin'",
+      "evidence_expected": "Documentation section modelling the problem.",
+      "review_checks": [
+        "Given n: produce an n x n grid with symbols 1..n, each exactly once in every row and every column.",
+        "See knowledge-base/assignments/detyra1/guidelines.md §Latin Square."
+      ]
+    },
+    {
+      "id": "LAT-002",
+      "criterion_id": "C3",
+      "category": "latin_square",
+      "requirement": "Latin Square: the problem representation is stated: variables, domains and constraints (and the solution representation).",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §3 (Latin Square), 'Kërkesat e detyrës': 'Tregoni reprezentimin e problemit (çka konsiderojme variabel, domain, etj.)'",
+      "evidence_expected": "Documentation naming the variables, their domains and the constraints; the code's data structures should match.",
+      "review_checks": [
+        "Typical: one variable per cell (i, j), domain {1..n}, all-different on rows and columns.",
+        "Does the representation in the documentation match the data structures in the code?"
+      ]
+    },
+    {
+      "id": "LAT-003",
+      "criterion_id": "C3",
+      "category": "latin_square",
+      "requirement": "Latin Square: an objective function is formulated.",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §3 (Latin Square), 'Kërkesat e detyrës': 'Formuloni Objective function'",
+      "evidence_expected": "A formula or precise definition of the objective/evaluation function and what value means 'solved'.",
+      "review_checks": [
+        "Typical: f = number of duplicate symbols in rows + columns; goal f = 0.",
+        "Is it a function of a (complete or partial) candidate solution, and is the goal value stated?"
+      ]
+    },
+    {
+      "id": "LAT-004",
+      "criterion_id": "C3",
+      "category": "latin_square",
+      "requirement": "Latin Square: the landscape (size of the search space) is calculated for the chosen representation.",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §3 (Latin Square), 'Kërkesat e detyrës': 'Kalkuloni landscape'",
+      "evidence_expected": "A calculation with the derivation, consistent with the stated representation.",
+      "review_checks": [
+        "Cell representation: n^(n^2) (n=5: 5^25, about 2.98e17); row-permutation representation: (n!)^n (n=5: 120^5, about 2.49e10).",
+        "The number must follow from the student's own representation; check the arithmetic. A correct derivation for a different but stated representation is acceptable."
+      ]
+    },
+    {
+      "id": "LAT-005",
+      "criterion_id": "C3",
+      "category": "latin_square",
+      "requirement": "Latin Square: Iterative Deepening Depth First Search (IDDFS) with backtracking is implemented, runs, and finds correct solutions.",
+      "mandatory": true,
+      "points": 5,
+      "can_be_na": false,
+      "severity_if_missing": "CRITICAL",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §3 (Latin Square), 'Kërkesat e detyrës': 'Implemento Iterative Deepening Depth First Search (IDDFS) with backtracking'",
+      "evidence_expected": "Source code of the algorithm; a run (or saved output) on the problem instance; a check that the output satisfies all constraints.",
+      "review_checks": [
+        "IDDFS: an outer loop over increasing depth limits calling a depth-limited DFS; a single unbounded DFS is not IDDFS.",
+        "Backtracking: a value is placed only if it is not already in the same row and column; the placement is undone on return.",
+        "Input n, output an n x n matrix with 1..n exactly once per row and column (the assignment's example uses n = 5).",
+        "Run the code with a timeout on the stated instance(s) and verify every constraint of the output with an independent checker.",
+        "A different algorithm labelled with the required name is MISSING for this requirement, not PARTIAL."
+      ]
+    },
+    {
+      "id": "TREE-001",
+      "criterion_id": "C4",
+      "category": "search_trees",
+      "requirement": "Search tree for the 8-Puzzle is constructed (initial state, operators, successor states over several levels, goal test).",
+      "mandatory": true,
+      "points": 8,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §4 (Search Trees): 'Konstrukto Search Tree per problemet: 8-Puzzle, Missionaries and Cannibals dhe Rotating Workforce Scheduling.'",
+      "evidence_expected": "Tree figure/diagram or generated tree (image, text or code output).",
+      "review_checks": [
+        "States are valid 3x3 configurations; operators move the blank Up/Down/Left/Right (branching 2-4).",
+        "Several levels are shown correctly; repeated states are noted or pruned.",
+        "See knowledge-base/assignments/detyra1/guidelines.md §Search trees."
+      ]
+    },
+    {
+      "id": "TREE-002",
+      "criterion_id": "C4",
+      "category": "search_trees",
+      "requirement": "Search tree for Missionaries and Cannibals is constructed (state encoding, legal actions, pruning of illegal states, path to the goal).",
+      "mandatory": true,
+      "points": 8,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §4 (Search Trees): 'Konstrukto Search Tree per problemet: 8-Puzzle, Missionaries and Cannibals dhe Rotating Workforce Scheduling.'",
+      "evidence_expected": "Tree figure/diagram or generated tree.",
+      "review_checks": [
+        "State (M, C, boat side) on one bank; 5 boat loads {1M, 2M, 1C, 2C, 1M1C}; illegal states (cannibals outnumber missionaries on a bank that has missionaries) are pruned.",
+        "The classic 3-3 instance needs 11 crossings; check that the path shown is legal."
+      ]
+    },
+    {
+      "id": "TREE-003",
+      "criterion_id": "C4",
+      "category": "search_trees",
+      "requirement": "Search tree for Rotating Workforce Scheduling is constructed (what a node / partial schedule is, how it is extended, which constraints prune branches).",
+      "mandatory": true,
+      "points": 9,
+      "can_be_na": false,
+      "severity_if_missing": "MAJOR",
+      "source": "knowledge-base/course/ai-2026-27/Detyra1.md §4 (Search Trees): 'Konstrukto Search Tree per problemet: 8-Puzzle, Missionaries and Cannibals dhe Rotating Workforce Scheduling.'",
+      "evidence_expected": "Tree figure/diagram or generated tree for a small instance.",
+      "review_checks": [
+        "Nodes are partial cyclic schedules (shifts or days off assigned to day slots); branching over shift types; pruning by workforce requirements per day/shift, min/max work-block lengths and forbidden shift sequences.",
+        "A small instance is acceptable; the instance must be stated."
+      ]
+    }
+  ]
+}

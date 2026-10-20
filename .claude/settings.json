@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m grader:*)",
+      "Bash(py -m grader:*)",
+      "Bash(curl -s -m 15 \"https://api.github.com/repos/pallets/flask/activity?per_page=1\")",
+      "Bash(curl -s -m 15 -I \"https://api.github.com/repos/pallets/flask/commits?per_page=1\")",
+      "Bash(scc --version)",
+      "Bash(where scc *)",
+      "Read(//c/Users/dafin/go/**)",
+      "Bash(winget --version)",
+      "Bash(go version *)",
+      "Bash(winget search *)",
+      "Bash(python src/make_dataset.py)",
+      "Bash(python src/preprocess.py)",
+      "Bash(python src/train.py)",
+      "Bash(python src/evaluate.py)",
+      "Bash(python -m grader cite --title \"Scikit-learn: Machine Learning in Python\")",
+      "Bash(PYTHONIOENCODING=utf-8 python -m grader cite --title \"Scikit-learn: Machine Learning in Python\")",
+      "Bash(python -c ' *)"
+    ],
+    "deny": [
+      "Edit(submissions/**)",
+      "Write(submissions/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/protect_submissions.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

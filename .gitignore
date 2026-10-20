@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.venv/
+
+# Student data and grading records: keep them out of the tool's git history.
+# Back these up separately; they are the audit trail for every grade.
+projects/*
+!projects/README.md
+submissions/
+reviews/
+evaluations/
+state/
+benchmark/results.*
+
+# Copyrighted textbooks: keep the local copy and extracted text out of git (INDEX.md / TOPICS.md / toc.json stay)
+knowledge-base/literature/books/*/*.pdf
+knowledge-base/literature/books/*/text/
+# Local dashboard: contains grades.
+dashboard.html
