@@ -1,6 +1,6 @@
 # AI/ML Project Review & Grading System
 
-Two independent AI agents, backed by a shared, versioned academic and AI/ML knowledge base, run inside Claude Code.
+Two independent AI agents, backed by a shared, versioned academic and AI/ML knowledge base, run inside Claude Code or directly from the terminal with the [automated API runner](docs/automated-runner.md). Other AI tools with workspace and terminal access can follow [AGENTS.md](AGENTS.md); see [portable workflows and prompts for the three Detyra 1 repositories](docs/ai-tools.md). Claude-specific slash commands, settings, and hooks require adaptation in other tools.
 
 - **Agent 1, AI/ML Project Reviewer** (`ml-reviewer`) acts as a senior AI/ML project supervisor. It reviews a project iteratively against the course requirements, ML methodology, literature, reproducibility, documentation and academic-integrity indicators. For each requirement it reports PASS / PARTIAL / MISSING / NOT_APPLICABLE / BLOCKER, with evidence and recommendations, until the project meets its Definition of Done.
 - **Agent 2, Professor / Final Evaluator** (`professor`) independently evaluates the frozen final submission against the fixed rubric. It does not coach. Every score and deduction cites a rubric requirement and concrete evidence. It produces criterion scores, a final grade, strengths, weaknesses, integrity concerns for human review, and a full justification.
@@ -24,7 +24,7 @@ Academic-integrity checks identify **risk indicators with evidence**. They never
 
 ## Requirements
 
-- Claude Code, opened in this folder.
+- Claude Code opened in this folder, another capable AI coding tool, the [subscription CLI runner](docs/subscriptions.md), or the terminal API runner with OpenAI (`OPENAI_API_KEY`, `OPENAI_MODEL`) or Claude (`ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL`). A model can also be supplied via `--model`.
 - Python 3.10+ (stdlib only). Optional: `pip install pypdf` to extract PDF text. Without it, the agents read PDFs directly. pypdf is required for `kb-add-book`.
 - git. Optional but recommended: [scc](https://github.com/boyter/scc) (`winget install BenBoyter.scc`) to measure real code lines and complexity per commit. Without it, history analysis falls back to `git numstat`.
 - Internet access for citation verification (Crossref/arXiv) and GitHub. Use `--offline` to skip citation checks.
@@ -75,6 +75,26 @@ States: `DRAFT → UNDER_REVIEW → READY_FOR_FINAL_REVIEW → FINAL_SUBMISSION 
 `python -m grader kb-add-book <pdf> --key … --title … --authors …` indexes a textbook into `knowledge-base/literature/books/<key>/`: the outline with pdf pages (`INDEX.md`), per-chapter text with page markers (`text/`, ligatures normalized for Grep), and metadata. Russell & Norvig, *AIMA* 4th ed. is installed as `aima4`, with a hand-made `TOPICS.md` mapping requirements to sections (e.g. DATA-004 → §19.4/19.4.1, EVAL-003 → §21.5, DOC-003 → §27.3). Agents cite it by section and use it for explanations and recommendations, never as a reason to deduct. The PDF and extracted text are copyrighted and git-ignored.
 
 ## Toolkit CLI (`python -m grader …`)
+
+Add repositories through interactive input with `python3 -m grader roster add`.
+Enter the repository URL, student name, and assignment ID; repeat for each repo.
+Use `python3 -m grader roster list` to view the saved roster. See the
+[AI tools guide](docs/ai-tools.md) for reviewing these saved entries.
+
+To run without chat prompts, configure `OPENAI_API_KEY` and `OPENAI_MODEL`, then
+use `python3 -m grader review-all --provider openai`. Grade already frozen IDs
+with `python3 -m grader grade-all --submissions <id1,id2> --provider openai`.
+Both support `--dry-run` without credentials. See the [runner guide](docs/automated-runner.md)
+for setup, limits, and static-analysis limitations.
+
+For Claude, set `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL` and use `--provider claude`
+with either command. Each provider uses its own credentials and model setting.
+
+To use subscriptions instead of API keys, sign in with the official CLI and use
+`python3 -m grader review-all --provider chatgpt` (ChatGPT Plus via Codex) or
+`python3 -m grader review-all --provider claude-code` (Claude Pro/Max via Claude Code).
+The same providers work with `grade-all --submissions <id1,id2>`.
+See [subscription setup](docs/subscriptions.md). They do not fall back to API billing.
 
 `versions` · `prepare <dir> --out <dir>` · `new-review <project|owner/repo> [--ref --deadline --team]` · `history <repo> --out <dir>` · `github repos --org … [--prefix … --write-roster projects/roster.json]` · `github freeze-all --roster projects/roster.json` · `kb-add-book <pdf> …` · `readiness <review-dir>` · `freeze <project> --student …` · `verify <submission-id>` · `new-evaluation <submission-id>` · `score <eval-dir>` · `override <eval-dir> …` · `latest-review <project>` · `cite --doi … | --arxiv … | --title "…"` · `state <project>` · `status` · `benchmark` · `check-expected <run-dir> <expected.json>` · `assignments` · `similarity --assignment <id>` · `ranking --assignment <id>` · `dashboard` (local HTML overview of all projects, reviews and grades)
 

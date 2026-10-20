@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 from . import (benchmark, books, cite, dashboard, expected, freeze, github, history, override, ranking, readiness,
-               score, similarity, state)
+               roster, score, similarity, state)
 from .common import (EVALUATIONS, REVIEWS, ROOT, STATES, SUBMISSIONS, assignment_files, list_assignments,
                      load_json, now_iso, project_key, stamp, write_json)
 from .inventory import build_inventory
@@ -137,6 +137,49 @@ def cmd_github_repos(a):
             {"student": None, "repo": r["full_name"], "team": [], "ref": None} for r in repos]}
         write_json(a.write_roster, roster)
         print(f"\nRoster template written to {a.write_roster}. Fill in student names and GitHub logins (team).")
+
+
+def cmd_roster_add(a):
+    try:
+        repo = a.repo if a.repo is not None else input("GitHub URL or owner/repo: ").strip()
+        student = a.student if a.student is not None else input("Student name: ").strip()
+        assignment = a.assignment
+        if assignment is None:
+            print("Available assignments: " + ", ".join(list_assignments()))
+            assignment = input("Assignment ID: ").strip()
+        entry = roster.add(Path(a.roster), repo, student, assignment)
+    except (EOFError, KeyboardInterrupt):
+        sys.exit("Input cancelled; roster was not changed.")
+    except (ValueError, OSError) as e:
+        sys.exit(str(e))
+    _print({"roster": str(Path(a.roster).resolve()), "added": entry})
+    print("Saved locally. No repository was fetched, reviewed, frozen, or graded.")
+
+
+def cmd_roster_list(a):
+    if not Path(a.roster).exists():
+        sys.exit("Roster not found. Add a repository with: python -m grader roster add")
+    try:
+        _print(roster.read(Path(a.roster)))
+    except (ValueError, OSError) as e:
+        sys.exit(str(e))
+
+
+def cmd_runner(a):
+    from . import runner
+    try:
+        result = runner.run_reviews(a) if a.cmd == "review-all" else runner.run_grades(a)
+    except (runner.RunnerError, ValueError, OSError) as e:
+        sys.exit(str(e))
+    _print(result)
+    return 1 if result.get("failed") else 0
+
+
+def positive_int(value):
+    value = int(value)
+    if value <= 0:
+        raise argparse.ArgumentTypeError("must be a positive integer")
+    return value
 
 
 def cmd_github_freeze_all(a):
@@ -343,6 +386,35 @@ def main(argv=None) -> int:
     p = sp.add_parser("history", help="analyse the git history of a local repo (C11 metrics + signals)")
     p.add_argument("repo"); p.add_argument("--out", required=True); p.add_argument("--ref", default="HEAD")
     p.add_argument("--deadline"); p.add_argument("--team"); p.set_defaults(fn=cmd_history)
+
+    for name, description in (("review-all", "automated API reviews of the saved roster"),
+                              ("grade-all", "automated two-phase API grading of frozen IDs")):
+        p = sp.add_parser(name, help=description)
+        p.add_argument("--provider", choices=["openai", "claude", "chatgpt", "claude-code"], default="openai")
+        p.add_argument("--model", help="model ID or chosen provider's model environment variable; subscription CLIs can use their default")
+        p.add_argument("--max-turns", type=positive_int, default=60, help="maximum model calls per phase")
+        p.add_argument("--max-output-tokens", type=positive_int, default=12000, help="output cap per direct API call (not subscription CLI calls)")
+        p.add_argument("--timeout", type=positive_int, default=120, help="request timeout in seconds")
+        p.add_argument("--dry-run", action="store_true", help="check scope without API calls or starting runs")
+        p.add_argument("--offline", action="store_true", help="skip preparation's external citation checks; API/GitHub still need network")
+        if name == "review-all":
+            p.add_argument("--roster", default="projects/roster.json")
+            p.add_argument("--assignment", help="fallback when a roster entry has no assignment")
+        else:
+            p.add_argument("--submissions", required=True, help="comma-separated frozen IDs; does not freeze repos")
+        p.set_defaults(fn=cmd_runner)
+
+    rp = sp.add_parser("roster", help="register student repositories locally")
+    rsp = rp.add_subparsers(dest="roster_command", required=True)
+    p = rsp.add_parser("add", help="add a repo; prompt for missing fields")
+    p.add_argument("repo", nargs="?")
+    p.add_argument("--student")
+    p.add_argument("--assignment")
+    p.add_argument("--roster", default="projects/roster.json")
+    p.set_defaults(fn=cmd_roster_add)
+    p = rsp.add_parser("list", help="show saved repositories")
+    p.add_argument("--roster", default="projects/roster.json")
+    p.set_defaults(fn=cmd_roster_list)
 
     gh = sp.add_parser("github", help="GitHub: list student repos, freeze all repos of a roster at the deadline")
     gsp = gh.add_subparsers(dest="gcmd", required=True)
