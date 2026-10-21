@@ -13,12 +13,34 @@ import threading
 import time
 import uuid
 import webbrowser
+from types import SimpleNamespace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 from . import dashboard, github, roster
 from .common import ROOT, REVIEWS, EVALUATIONS, SUBMISSIONS, assignment_files, load_json, now_iso, write_json
+
+
+def provider_status(data):
+    """Check local configuration/sign-in only; never request an inference."""
+    from . import runner
+    name = data.get("provider")
+    if name not in {"chatgpt", "claude-code", "openai", "claude"}:
+        raise ValueError("Choose a supported provider")
+    model = data.get("model", "")
+    if not isinstance(model, str):
+        raise ValueError("Model must be text")
+    args = SimpleNamespace(provider=name, model=model.strip() or None, timeout=30)
+    args.model = runner.model_for(args)
+    try:
+        runner.create_provider(args)
+    except runner.RunnerError as error:
+        return {"ready": False, "message": str(error)}
+    message = ("CLI installed and signed in. Model access is checked when you run."
+               if name in {"chatgpt", "claude-code"} else
+               "API key and model configured. Credentials and model access are checked when you run.")
+    return {"ready": True, "message": message}
 
 
 def integer(data, key, default, minimum, maximum):
@@ -312,7 +334,9 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(data, dict):
                 raise ValueError("Expected a JSON object")
             path = urlsplit(self.path).path
-            if path == "/api/repos":
+            if path == "/api/provider-status":
+                self.respond(200, provider_status(data))
+            elif path == "/api/repos":
                 with self.server.jobs.lock:
                     if self.server.jobs.active():
                         raise ValueError("Wait for the running job before changing the roster")

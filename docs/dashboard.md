@@ -41,6 +41,13 @@ See [subscription setup](subscriptions.md) and [API runner setup](automated-runn
 The dashboard does not accept API keys. Provider and model choices apply to
 new runs; they do not change existing results.
 
+Choosing a provider checks its local setup and displays **Ready** or **Setup
+needed** with installation/sign-in instructions. This check makes no model call.
+Review and grading buttons stay disabled until setup passes; freezing and
+comparison remain available. Sign in from your terminal, then click **Check
+provider again**. For API providers the check confirms configuration only;
+credentials and model availability are verified during the actual run.
+
 ## Freeze, grade and compare
 
 Select saved repositories and click **Freeze selected repositories** to create

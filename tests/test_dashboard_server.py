@@ -11,7 +11,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from grader import cli, dashboard, dashboard_server as live
+from grader import cli, dashboard, dashboard_server as live, runner
 from grader.common import write_json
 
 
@@ -116,6 +116,37 @@ class DashboardJobTests(unittest.TestCase):
         self.assertIsNone(self.jobs.usage(json.dumps({"review_dir": str(self.root)})))
 
 
+class DashboardProviderTests(unittest.TestCase):
+    def test_missing_cli_returns_setup_instructions_without_inference(self):
+        with patch("grader.subscriptions.shutil.which", return_value=None):
+            result = live.provider_status({"provider": "claude-code"})
+        self.assertFalse(result["ready"])
+        self.assertIn("Install claude CLI", result["message"])
+
+    def test_auth_error_is_visible_and_success_does_not_call_model(self):
+        with patch.object(runner, "create_provider", side_effect=runner.RunnerError("Run: claude auth login")):
+            result = live.provider_status({"provider": "claude-code"})
+        self.assertFalse(result["ready"])
+        self.assertIn("claude auth login", result["message"])
+        with patch.object(runner, "create_provider") as create:
+            result = live.provider_status({"provider": "chatgpt", "model": "chosen-model"})
+        self.assertTrue(result["ready"])
+        self.assertEqual(create.call_args.args[0].model, "chosen-model")
+        create.return_value.respond.assert_not_called()
+
+    def test_api_status_checks_configuration_without_network_or_key_disclosure(self):
+        with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "", "ANTHROPIC_MODEL": ""}):
+            self.assertFalse(live.provider_status({"provider": "claude"})["ready"])
+        with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "private-fixture", "ANTHROPIC_MODEL": "fixture-model"}), \
+                patch("urllib.request.urlopen") as network:
+            result = live.provider_status({"provider": "claude"})
+        self.assertTrue(result["ready"])
+        self.assertNotIn("private-fixture", json.dumps(result))
+        network.assert_not_called()
+        with self.assertRaises(ValueError):
+            live.provider_status({"provider": "shell"})
+
+
 class DashboardHTTPTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -171,6 +202,13 @@ class DashboardHTTPTests(unittest.TestCase):
             self.assertEqual(self.request("POST", "/api/jobs", {"action": "review"})[0], 202)
             start.assert_called_once_with({"action": "review"})
         self.assertEqual(self.request("POST", "/api/stop", {"id": "unknown"})[0], 400)
+
+    def test_provider_check_requires_token_and_returns_setup_state(self):
+        self.assertEqual(self.request("POST", "/api/provider-status", {"provider": "claude-code"}, token=False)[0], 403)
+        with patch.object(live, "provider_status", return_value={"ready": False, "message": "Sign in first"}):
+            status, body = self.request("POST", "/api/provider-status", {"provider": "claude-code"})
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body), {"ready": False, "message": "Sign in first"})
 
     def test_cli_selects_live_server_only_with_serve_flag(self):
         with patch.object(live, "serve") as serve, contextlib.redirect_stdout(io.StringIO()):

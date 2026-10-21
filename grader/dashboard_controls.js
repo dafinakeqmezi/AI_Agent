@@ -57,6 +57,11 @@
         <label>Maximum calls per phase<input id="live-turns" type="number" min="1" max="60" value="3"></label>
         <label>Seconds per model call<input id="live-timeout" type="number" min="10" max="1800" value="300"></label>
       </div>
+      <div class="secondary">
+        <p id="live-provider-status" class="small" role="status" aria-live="polite">Checking provider…</p>
+        <button id="live-check-provider" class="btn" type="button">Check provider again</button>
+        <p class="small muted">Choose a provider, then select repositories and click Review. Sign in from your terminal; this menu does not open login.</p>
+      </div>
       <p id="live-scope" class="small muted"></p>
       <div class="buttons"><button id="live-review" class="btn">Review selected repositories</button></div>
       <details class="secondary"><summary>Freeze repositories for grading</summary>
@@ -81,6 +86,7 @@
   const el = id => document.getElementById("live-" + id);
   let state, busy = false, fetching = false, signature = "", submissionSignature = "";
   let latestJob;
+  let providerReady = false, providerCheck = 0;
   async function api(path, body) {
     const response = await fetch(path, {method: body ? "POST" : "GET", headers: {
       "X-Dashboard-Token": config.token, "Content-Type": "application/json"
@@ -90,6 +96,22 @@
     return result;
   }
   const selected = id => Array.from(el(id).querySelectorAll("input:checked")).map(input => input.value);
+  async function checkProvider() {
+    const request = ++providerCheck;
+    providerReady = false;
+    el("provider-status").textContent = "Checking " + el("provider").selectedOptions[0].text + "…";
+    updateButtons();
+    try {
+      const result = await api("/api/provider-status", {provider: el("provider").value, model: el("model").value.trim()});
+      if (request !== providerCheck) return;
+      providerReady = result.ready;
+      el("provider-status").textContent = (result.ready ? "Ready: " : "Setup needed: ") + result.message;
+    } catch (error) {
+      if (request !== providerCheck) return;
+      el("provider-status").textContent = "Provider check failed: " + error.message;
+    }
+    updateButtons();
+  }
   function choices(container, items) {
     const checked = new Set(selected(container));
     el(container).replaceChildren();
@@ -103,9 +125,9 @@
   }
   function updateButtons() {
     const repos = selected("repos"), subs = selected("submissions");
-    el("review").disabled = busy || !repos.length;
+    el("review").disabled = busy || !providerReady || !repos.length;
     el("freeze").disabled = busy || !repos.length;
-    el("grade").disabled = busy || !subs.length;
+    el("grade").disabled = busy || !providerReady || !subs.length;
     el("compare").disabled = busy || subs.length < 2;
     el("stop").disabled = !busy;
     el("add").querySelector("button").disabled = busy;
@@ -174,7 +196,15 @@
     try { if (latestJob) await api("/api/stop", {id: latestJob.id}); await refresh(); }
     catch (error) { el("error").textContent = error.message; }
   };
-  el("provider").onchange = updateButtons; el("model").oninput = updateButtons;
+  el("provider").onchange = checkProvider;
+  el("check-provider").onclick = checkProvider;
+  el("model").oninput = () => {
+    ++providerCheck; providerReady = false;
+    el("provider-status").textContent = "Model changed. Leave the field or click Check provider again.";
+    updateButtons();
+  };
+  el("model").onchange = checkProvider;
   refresh();
+  checkProvider();
   setInterval(refresh, 3000);
 })();
