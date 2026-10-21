@@ -104,6 +104,58 @@ class SubscriptionTests(unittest.TestCase):
         self.assertEqual(json.dumps(history), before)
         self.assertLess(len(json.dumps(compact)), len(before))
 
+    def test_prompt_preserves_source_blocks_and_deduplicates_exact_content(self):
+        text = "\n".join(f'L{i}: value_{i} = "quoted \\ text"' for i in range(1, 42))
+        packet = [{"path": "project/a.py", "text": text, "total_lines": 41, "next_line": None},
+                  {"path": "project/copy.py", "text": text, "total_lines": 41, "next_line": None}]
+        history = [{"role": "user", "content": json.dumps({"prefetched_files": packet})},
+                   {"type": "function_call_output", "call_id": "one", "output": json.dumps({"files": [
+                       {"path": "project/missing.py", "error": "Unavailable"}, packet[0]]})}]
+        before = json.dumps(history)
+        prompt = subscriptions.inference_prompt("Keep the rules", history, [])
+        self.assertIn("SOURCE L1-L20", prompt)
+        self.assertIn("SOURCE L21-L40", prompt)
+        self.assertIn("SOURCE L41-L41", prompt)
+        self.assertEqual(prompt.count('value_41 = "quoted \\ text"'), 1)
+        self.assertIn("project/copy.py", prompt)
+        self.assertIn("Identical supplied content: project/a.py", prompt)
+        self.assertIn("Unavailable", prompt)
+        self.assertEqual(json.dumps(history), before)
+
+    def test_prompt_keeps_complete_json_and_changed_reads(self):
+        result = {"path": "project/results.json", "format": "complete_json", "content": {"grid": [1, 2, 3]},
+                  "source_locations": {"$": "L1-L8"}, "total_lines": 8, "next_line": None}
+        changed = {**result, "content": {"grid": [3, 2, 1]}}
+        history = [{"role": "user", "content": json.dumps({"prefetched_files": [result]})},
+                   {"type": "function_call_output", "output": json.dumps(changed)}]
+        prompt = subscriptions.inference_prompt("Rules", history, [])
+        self.assertIn('"grid":[1,2,3]', prompt)
+        self.assertIn('"grid":[3,2,1]', prompt)
+        self.assertIn('"$":"L1-L8"', prompt)
+        self.assertNotIn("Identical supplied content:", prompt)
+
+    def test_prefetch_source_blocks_preserve_every_line_and_alias_only_exact_duplicates(self):
+        project = self.root / "project"
+        project.mkdir()
+        lines = [f'value_{i} = "α\\β"' for i in range(90)]
+        text = "\n".join(lines) + "\n"
+        for name in ("first.py", "same.py"):
+            (project / name).write_text(text)
+        (project / "changed.py").write_text(text + "different = True\n")
+        files = runner.Files()
+        files.mount("project", project)
+        packet, _ = runner.prefetch(files, "detyra1")
+        by_path = {p["path"]: p for p in packet}
+        first = by_path["project/first.py"]
+        self.assertEqual(first["format"], "source_blocks")
+        self.assertEqual([b["start_line"] for b in first["blocks"]], [1, 41, 81])
+        self.assertEqual("\n".join(b["text"] for b in first["blocks"]).splitlines(), lines)
+        self.assertEqual(by_path["project/same.py"]["same_content_as"], "project/first.py")
+        self.assertNotIn("same_content_as", by_path["project/changed.py"])
+        prompt = subscriptions.inference_prompt("Rules", [{"role": "user", "content": json.dumps({"prefetched_files": packet})}], [])
+        self.assertIn('value_89 = "α\\β"', prompt)
+        self.assertIn("SOURCE L81-L90", prompt)
+
     def test_phase_reuses_working_directory_but_never_stale_outputs(self):
         provider = self.provider("chatgpt")
         directories = []
@@ -225,6 +277,28 @@ class SubscriptionTests(unittest.TestCase):
         self.assertNotIn("Private Agent 1", json.dumps(packet))
         self.assertNotIn("project/linked.txt", files.reads)
         self.assertEqual(files.reads, {entry["path"] for entry in packet})
+
+    def test_prefetch_includes_complete_json_and_prioritizes_mounted_phase2_snapshots(self):
+        project = self.root / "project"
+        project.mkdir()
+        write_json(project / "results.json", {"grid": list(range(300))})
+        (project / "large.md").write_text("Long documentation\n" * 2000)
+        snapshot = self.root / "evaluation.phase1.json"
+        write_json(snapshot, {"assessments": [{"requirement_id": "A", "status": "PASS"}]})
+        files = runner.Files()
+        files.mount("project", project)
+        files.one("evaluation.phase1.json", snapshot)
+        packet, size = runner.prefetch(files, "detyra1", budget=3000)
+        self.assertLessEqual(size, 3000)
+        self.assertEqual(packet[0]["path"], "evaluation.phase1.json")
+        result = next(p for p in packet if p["path"] == "project/results.json")
+        self.assertEqual(result["content"]["grid"], list(range(300)))
+        self.assertIsNone(result["next_line"])
+        # Independent phase 1 has no mounted earlier assessment to prefetch.
+        independent = runner.Files()
+        independent.mount("project", project)
+        packet, _ = runner.prefetch(independent, "detyra1", budget=3000)
+        self.assertNotIn("evaluation.phase1.json", [p["path"] for p in packet])
 
     def test_batched_reads_keep_scope_and_report_each_error(self):
         (self.root / "one.md").write_text("First file")

@@ -85,6 +85,33 @@ through scoped reads; the packet is not treated as the complete repository.
 For each model step, Python starts a fresh ephemeral CLI process. One empty
 temporary working directory is reused within a phase to keep the prompt prefix
 stable; it is deleted at phase end and is never reused by another project or phase.
+
+Subscription prompts carry source text in plain numbered blocks rather than
+JSON-escaped strings with a label on every line. Blocks retain original start
+and end lines; exact line reads remain available for checking citations. Exact
+duplicate file contents and repeated reads reference the earlier supplied text,
+while changed content and distinct pages remain separate. This optimization is
+local to the current phase and never reuses another student's context.
+
+Code, reports and preparation summaries are prioritized ahead of bulky generated
+transcripts. The packet remains bounded; omitted files are still readable and
+are never marked inspected until supplied. The model is instructed to return
+compact JSON and avoid echoing metadata that Python adds itself.
+
+Small JSON files (up to 64 KB on disk and 48,000 compact characters) are supplied
+as complete structured content with original line-range anchors. This includes
+saved results and assessments, avoiding repeated 200-line reads of pretty-printed
+JSON. Explicit line requests still return the original text. Phase 2 prioritizes
+the saved phase-1 assessment, scores and Agent 1 report in its evidence packet;
+phase 1 cannot access those earlier conclusions.
+
+For phase 2, the model can submit only corrected requirement rows and the
+discrepancy report, or an empty corrections list when nothing changed. Python
+preserves all untouched assessments, validates the merged document and recomputes
+the score. This avoids generating the entire assessment a second time. Both
+phases remain separate, and every requirement still appears in the final result.
+Each call also receives the remaining call budget; no extra calls are added
+automatically. These optimizations apply to new runs, not a job already running.
 The CLI receives only the role instructions and
 this phase's conversation, returning one structured action. Python executes file
 reads through the existing scoped file reader and validates submitted reports.

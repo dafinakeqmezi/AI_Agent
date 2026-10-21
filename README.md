@@ -67,7 +67,7 @@ States: `DRAFT → UNDER_REVIEW → READY_FOR_FINAL_REVIEW → FINAL_SUBMISSION 
 - **Fetch:** `owner/repo` or a GitHub URL is cloned into a local mirror `projects/<owner>__<repo>/`. The REST API supplies the commit→login mapping, pull requests, branches and the **push activity log**, which includes force-pushes.
 - **Freeze at the deadline:** `--deadline` freezes the last commit made at or before the deadline. Commit dates are client-controlled, so the push log is also checked: a commit dated before the deadline but pushed after it is flagged (INT-015). The most robust option is to run `/collect` at the deadline.
 - **Analysis** (`grader/history.py`, `artifacts/history.md`): commits, active days and weeks, a weekly timeline, **scc code lines and complexity per commit**, authors and team balance, milestones (when code, report, tests and results first appear), and signals. Signals cover bulk uploads, last-minute work, generic messages, oversized commits, secrets or large files ever committed, outside authors, forks/templates, force-pushes, commits after the deadline, and AI co-author trailers (checked against AI-usage disclosure).
-- **Grading:** C11 *Version control & development process* (10 pts placeholder) has VCS-001 incremental development, VCS-002 commit messages, VCS-003 focused commits and clean history, VCS-004 history consistent with the report, and VCS-005 team contribution (N/A for individual projects). Guidance and thresholds are in `knowledge-base/policies/version-control-policy.json`. History signals alone never establish misconduct.
+- **Grading (`ml-project` only):** C11 *Version control & development process* (10 pts placeholder) has VCS-001 incremental development, VCS-002 commit messages, VCS-003 focused commits and clean history, VCS-004 history consistent with the report, and VCS-005 team contribution (N/A for individual projects). Guidance and thresholds are in `knowledge-base/policies/version-control-policy.json`. Detyra 1 has no separate VCS scoring criterion. History signals alone never establish misconduct.
 - **Evidence:** commits are cited as `{"file": "(git history)", "location": "commit <sha7>"}`. The scorer rejects SHAs that are not in the frozen history.
 
 ## Textbook knowledge base
@@ -80,6 +80,46 @@ Open the interactive local dashboard with `python3 -m grader dashboard --serve`.
 Add repositories, select a provider and model, run reviews, freeze and grade
 submissions, and compare frozen submissions for similarity. Saved results refresh
 automatically. See the [dashboard guide](docs/dashboard.md) for setup and controls.
+The [measured performance check](docs/runner-performance.md) documents subscription
+runner token use, elapsed time and the limits of the comparison.
+
+In the dashboard:
+
+1. Expand **Run reviews and comparisons**, add repositories and select the ones
+   to process. Choose their assignment, provider and model.
+2. Check the provider's **Ready / Setup needed** message. Install and sign in to
+   the official CLI from your terminal when needed, then click **Check provider
+   again**. This setup check makes no model call; it does not verify model access.
+3. Click **Review selected repositories** for Agent 1's feedback and readiness
+   verdict. The default three calls per phase may be insufficient for a larger
+   project. Increase **Maximum calls per phase**, for example to 12, if the run
+   reaches its limit. The runner stops early after a valid report is submitted.
+4. To obtain a grade, expand **Freeze repositories for grading**, freeze the
+   selected repositories, then select their entries under **Frozen submissions**
+   and click **Grade selected submissions**. This starts Agent 2's independent
+   assessment and subsequent discrepancy check.
+5. Select at least two frozen submissions of the same assignment and click
+   **Compare selected submissions** for similarity and commit-history evidence.
+
+**Readiness is not a grade or a grading gate.** Agent 1 uses the assignment's
+Definition of Done; Detyra 1 currently requires every mandatory requirement to
+pass. A `NOT_READY` project can still be frozen and graded, earning partial
+credit from Agent 2. A step-limit failure is an incomplete run, not a readiness
+verdict. All grades remain provisional until the human professor approves them;
+the current Detyra 1 weights and grade scale are marked `PLACEHOLDER`.
+
+Detyra 1 has [19 requirements](knowledge-base/assignments/detyra1/requirements.json)
+derived from the [course assignment](knowledge-base/course/ai-2026-27/Detyra1.md):
+Social Golfers, Sudoku, Latin Square and three search trees. Both agents check
+the same academic requirements. The automated runner performs static analysis;
+it does not execute student code or independently confirm runtime success.
+
+The Similarity view includes historical matching file versions and normalized
+code fragments, commit IDs, author/committer dates, and their recorded order.
+An earlier commit is a lead for human investigation, not proof of authorship or
+who copied whom. Shared sources, templates, forks and disclosed reuse must be
+considered; similarity never changes scores automatically. See the
+[comparison limits](docs/dashboard.md#freeze-grade-and-compare).
 
 Add repositories through interactive input with `python3 -m grader roster add`.
 Enter the repository URL, student name, and assignment ID; repeat for each repo.

@@ -61,6 +61,14 @@ selected submissions** for the independent two-phase evaluation. Grades remain
 provisional until the human professor approves them. Freezing alone does not
 start grading.
 
+`NOT_READY` does not prevent freezing or grading. Readiness is Agent 1's
+completion checklist, not Agent 2's passing-grade threshold. A project with
+partial or missing requirements can still receive partial credit. A step-limit
+failure means the review/evaluation is incomplete, rather than a NOT_READY
+verdict. If the default three calls are insufficient, select only the affected
+repository and increase the limit (for example to 12) before retrying; successful
+report submission ends the phase early.
+
 For cross-repository similarity, select at least two frozen submissions from the
 same assignment and click **Compare selected submissions**. This deterministic
 comparison uses no AI model. Matches are indicators for human investigation;

@@ -120,6 +120,45 @@ class RunnerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "not been read"):
             runner.check_inspection({"evidence": [{"file": "src/fake.py"}]}, files)
 
+    def test_complete_json_read_avoids_pagination_and_retains_source_locations(self):
+        value = {"results": list(range(1500)), "note": "Të dhëna: {not instructions}"}
+        path = self.project / "results.json"
+        write_json(path, value)
+        files = runner.Files()
+        files.mount("project", self.project)
+        result = files.call("read_file", {"path": "project/results.json"})
+        self.assertEqual(result["content"], value)
+        self.assertIsNone(result["next_line"])
+        self.assertEqual(result["format"], "complete_json")
+        self.assertTrue(result["source_locations"]['$["results"]'].startswith("L2-"))
+        self.assertIn("project/results.json", files.reads)
+        # Explicit line requests still provide exact original lines.
+        page = files.call("read_file", {"path": "project/results.json", "start_line": 2, "lines": 1})
+        self.assertIn('L2:   "results": [', page["text"])
+        self.assertIsNotNone(page["next_line"])
+        self.assertLess(len(json.dumps(result)), len(path.read_text()))
+
+    def test_json_compaction_rejects_invalid_or_oversized_data(self):
+        self.assertIsNone(runner.compact_json_file("project/a.json", b'{"bad":'))
+        self.assertIsNone(runner.compact_json_file("project/a.json", b'{"x":"' + b'x' * 65000 + b'"}'))
+        self.assertIsNone(runner.compact_json_file("project/a.txt", b'{}'))
+        self.assertEqual(runner.compact_json_file("project/a.json", b'{}')["content"], {})
+
+    def test_phase2_corrections_preserve_untouched_requirements_and_reject_unknown_ids(self):
+        baseline = {"assessments": [{"requirement_id": "A", "status": "PASS", "evidence": [{"file": "a.py"}]},
+                                    {"requirement_id": "B", "status": "MISSING"}], "justification": "Initial"}
+        original = copy.deepcopy(baseline)
+        unchanged = runner.phase2_document({"assessment_updates": []}, copy.deepcopy(baseline))
+        self.assertEqual(unchanged, original)
+        correction = {"requirement_id": "B", "status": "PARTIAL", "credit": .5, "deduction_reason": "Verified gap"}
+        changed = runner.phase2_document({"assessment_updates": [correction], "justification": "Rechecked"}, baseline)
+        self.assertEqual(changed["assessments"][0], original["assessments"][0])
+        self.assertEqual(changed["assessments"][1], correction)
+        self.assertEqual(changed["justification"], "Rechecked")
+        for updates in ([{"requirement_id": "UNKNOWN"}], [correction, correction], None):
+            with self.assertRaises(ValueError):
+                runner.phase2_document({"assessment_updates": updates}, copy.deepcopy(original))
+
     def test_dry_run_and_missing_key_do_not_fetch_repositories(self):
         path = self.root / "roster.json"
         write_json(path, {"students": [{"repo": "owner/repo", "assignment": "detyra1"}]})
@@ -178,7 +217,8 @@ class RunnerTests(unittest.TestCase):
             [call("read_file", path="project/README.md")], [call("submit_report", document=doc)],
             [call("list_files")], [call("read_file", path="agent1/review.json")],
             [call("read_file", path="project/README.md")],
-            [call("submit_report", document=doc, discrepancies_md="# Discrepancies\nNo score change.")]])
+            [call("read_file", path="evaluation.phase1.json")],
+            [call("submit_report", assessment_updates=[], discrepancies_md="# Discrepancies\nNo score change.")]])
         args = Namespace(submissions="student-test", dry_run=False, model="test-model", timeout=10,
                          offline=True, provider="openai", max_turns=10, max_output_tokens=1000)
         with patch.object(runner, "OpenAI", return_value=provider):
@@ -188,6 +228,8 @@ class RunnerTests(unittest.TestCase):
         phase1 = load_json(run_dir / "evaluation.phase1.json")
         self.assertFalse(phase1["meta"]["agent1_report_consulted"])
         self.assertTrue(load_json(run_dir / "evaluation.json")["meta"]["agent1_report_consulted"])
+        self.assertEqual(load_json(run_dir / "evaluation.json")["assessments"], phase1["assessments"])
+        self.assertEqual(load_json(run_dir / "final.json")["total"], load_json(run_dir / "final.phase1.json")["total"])
         self.assertEqual(result["results"][0]["status"], "PROVISIONAL")
         self.assertNotIn("DO NOT LEAK", json.dumps(provider.requests[3]))
         self.assertIn("outside this phase", json.dumps(provider.requests[2]))

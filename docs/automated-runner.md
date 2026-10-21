@@ -120,6 +120,13 @@ runner validates and scores its assessments, preserves `evaluation.phase1.json` 
 `final.phase1.json`, and starts a separate phase-2 context with the latest Agent 1
 review, if one exists. Phase 2 rechecks evidence, writes `discrepancies.md`, and
 rescores. No-review cases are explicit. Each phase has its own audit file.
+
+Phase 2 may return only corrected requirement assessments (or no changes) plus
+the discrepancy report. Python merges those corrections into the saved phase-1
+document and runs the same full validation and scoring. Unchanged rows are
+preserved rather than regenerated. Small JSON evidence can be read as complete
+structured content with original source-line anchors, reducing pagination calls;
+explicit line reads remain available.
 Manifests are checked before scoring and again after the workflow.
 
 Results are provisional and saved in the evaluation directory. Only the human
