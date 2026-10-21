@@ -103,7 +103,7 @@ In the dashboard:
 
 **Readiness is not a grade or a grading gate.** Agent 1 uses the assignment's
 Definition of Done; Detyra 1 currently requires every mandatory requirement to
-pass. A `NOT_READY` project can still be frozen and graded, earning partial
+pass. A **Not completed** project (stored code `NOT_READY`) can still be frozen and graded, earning partial
 credit from Agent 2. A step-limit failure is an incomplete run, not a readiness
 verdict. All grades remain provisional until the human professor approves them;
 the current Detyra 1 weights and grade scale are marked `PLACEHOLDER`.

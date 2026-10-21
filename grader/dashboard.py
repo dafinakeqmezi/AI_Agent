@@ -395,7 +395,7 @@ ul.plain li { margin: 4px 0; }
       hId: "ID", hReq: "Kërkesa", hExpected: "E pritur", mandatory: "e detyrueshme", offkey: "jashtë çelësit", notAsserted: "pa pritje",
       nothing: "Asgjë për këtë filtër.", actions: "veprimet kryesore për studentin", weaknesses: "dobësitë", strengths: "Pikat e forta",
       history: "Historiku i ekzekutimeve", hRun: "Ekzekutimi", hType: "Lloji", hResult: "Rezultati", hFiles: "Skedarët",
-      review: "Rishikim", frozen: "Dorëzim i ngrirë", incomplete: "i papërfunduar", key: "çelësi", report: "raporti", discrepancies: "mospërputhjet", keycheck: "kontrolli i çelësit",
+      review: "Rishikim", frozen: "Dorëzim i ngrirë", incomplete: "Ekzekutim i papërfunduar", completionNote: "Rishikimi përfundoi; projekti nuk i plotëson ende të gjitha kërkesat. Mund të ngrihet dhe vlerësohet.", key: "çelësi", report: "raporti", discrepancies: "mospërputhjet", keycheck: "kontrolli i çelësit",
       grade: "nota", agreement: "përputhja", testRun: "test teknik i sistemit, jo notë",
       tabProjects: "Projektet", tabRanking: "Renditja", tabSimilarity: "Ngjashmëria (kopjimi)", allAssignments: "Të gjitha detyrat",
       hAssignment: "Detyra", hRank: "Vendi", hSimilarity: "Ngjashmëria", hStatus: "Statusi",
@@ -435,7 +435,7 @@ ul.plain li { margin: 4px 0; }
       hId: "ID", hReq: "Requirement", hExpected: "Expected", mandatory: "mandatory", offkey: "off key", notAsserted: "not asserted",
       nothing: "Nothing to show for this filter.", actions: "top actions for the student", weaknesses: "weaknesses", strengths: "Strengths",
       history: "Run history", hRun: "Run", hType: "Type", hResult: "Result", hFiles: "Files",
-      review: "Review", frozen: "Frozen submission", incomplete: "incomplete", key: "key", report: "report", discrepancies: "discrepancies", keycheck: "key check",
+      review: "Review", frozen: "Frozen submission", incomplete: "Run incomplete", completionNote: "The review finished; the project does not yet meet all completion requirements. It can still be frozen and graded.", key: "key", report: "report", discrepancies: "discrepancies", keycheck: "key check",
       grade: "grade", agreement: "agreement", testRun: "toolkit test, not a grade",
       tabProjects: "Projects", tabRanking: "Ranking", tabSimilarity: "Similarity (copying)", allAssignments: "All assignments",
       hAssignment: "Assignment", hRank: "Rank", hSimilarity: "Similarity", hStatus: "Status",
@@ -456,11 +456,11 @@ ul.plain li { margin: 4px 0; }
     sq: {
       PASS: "Plotësuar", PARTIAL: "Pjesërisht", MISSING: "Mungon", BLOCKER: "Bllokues", NOT_APPLICABLE: "Nuk aplikohet",
       DRAFT: "Draft", UNDER_REVIEW: "Në rishikim", READY_FOR_FINAL_REVIEW: "Gati për vlerësim", FINAL_SUBMISSION: "Dorëzuar", GRADED: "Vlerësuar",
-      NOT_READY: "Jo gati", NONE_FOUND: "Asnjë tregues", NEEDS_REVIEW: "Kërkon shqyrtim", HIGH_CONCERN: "Shqetësim i lartë",
+      NOT_READY: "E papërfunduar", NONE_FOUND: "Asnjë tregues", NEEDS_REVIEW: "Kërkon shqyrtim", HIGH_CONCERN: "Shqetësim i lartë",
       PROVISIONAL: "Provizore", APPROVED: "Miratuar", REEVALUATION_REQUESTED: "Rivlerësim i kërkuar", FAIL: "FAIL",
       HIGH: "E lartë", MEDIUM: "Mesatare", LOW: "E ulët", NONE: "Asnjë"
     },
-    en: {}
+    en: { NOT_READY: "Not completed" }
   };
   var GRADE_NAMES = {
     sq: { 10: "Shkëlqyeshëm", 9: "Shumë mirë", 8: "Mirë", 7: "Mjaft mirë", 6: "Kalueshëm", 5: "Dobët – nuk kalon" },
@@ -489,7 +489,7 @@ ul.plain li { margin: 4px 0; }
     return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function chip(s, label, tone) {
     if (!s && !label) return '<span class="chip t-na">—</span>';
-    return '<span class="chip t-' + (tone || TONE[s] || "na") + '" title="' + esc(s || "") + '">' + esc(label || lbl(s)) + "</span>"; }
+    return '<span class="chip t-' + (tone || TONE[s] || "na") + '" title="' + esc(s === "NOT_READY" ? T("completionNote") : s || "") + '">' + esc(label || lbl(s)) + "</span>"; }
   function norm(s) { return s === "BLOCKER" ? "MISSING" : s; }
   function link(href, label) { return href ? '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(label) + "</a>" : ""; }
   function intName(id) { return (lang === "sq" && INT_SQ[id]) || D.integrity_names[id] || id; }

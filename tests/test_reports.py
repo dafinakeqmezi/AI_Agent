@@ -29,12 +29,14 @@ class ReviewReportTests(unittest.TestCase):
         self.assertIn('return "a\\|b"', result)
         self.assertIn("Rishikimi i projektit", result)
         self.assertIn("automated reviewer", result)
+        self.assertIn("E papërfunduar", result)
 
     def test_renderer_escapes_html_in_student_quotes(self):
         result = render_review({"requirements": [], "findings": ["<script>alert(1)</script>"]},
                                {"verdict": "NOT_READY"}, "ml-project")
         self.assertNotIn("<script>", result)
         self.assertIn("&lt;script&gt;", result)
+        self.assertIn("Not completed", result)
 
     def test_review_tool_requests_assessment_once(self):
         submit = next(t for t in tools_for("review", 1) if t["name"] == "submit_report")

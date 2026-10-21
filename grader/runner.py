@@ -671,7 +671,7 @@ def run_reviews(args):
                              "review", args.max_turns, args.max_output_tokens)
             results.append({"repo": entry["repo"], "review_dir": str(run_dir),
                             "verdict": result["verdict"], "counts": result["counts"]})
-            print(f"  {result['verdict']}: {run_dir / 'review.md'}", flush=True)
+            print(f"  {readiness.verdict_label(result['verdict'])}: {run_dir / 'review.md'}", flush=True)
         except (RunnerError, ValueError, OSError, SystemExit) as e:
             results.append({"repo": entry["repo"], "error": str(e),
                             "review_dir": str(run_dir) if run_dir else None})

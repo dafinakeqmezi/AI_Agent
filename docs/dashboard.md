@@ -61,6 +61,13 @@ selected submissions** for the independent two-phase evaluation. Grades remain
 provisional until the human professor approves them. Freezing alone does not
 start grading.
 
+**Not completed** (Albanian: **E papërfunduar**) means the review finished but
+the project's completion checklist is not fully satisfied. Its stored code is
+still `NOT_READY` for compatibility with earlier runs. **Run incomplete** means
+the review or evaluation itself did not finish, for example after a call limit.
+Existing dashboard results use the new label automatically; previously saved
+Markdown reports retain the wording used when they were generated.
+
 `NOT_READY` does not prevent freezing or grading. Readiness is Agent 1's
 completion checklist, not Agent 2's passing-grade threshold. A project with
 partial or missing requirements can still receive partial credit. A step-limit

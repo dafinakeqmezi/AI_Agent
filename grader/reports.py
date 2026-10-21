@@ -4,6 +4,7 @@ from __future__ import annotations
 from html import escape
 
 from .common import identity
+from .readiness import verdict_label
 
 
 def text(value):
@@ -48,7 +49,7 @@ def render_review(document, readiness, assignment):
                  "recommendations": "Prioritized actions", "limitations": "Limitations"})
     ada = identity("ml-reviewer")
     lines = ["# " + headings["title"], "", ada["greeting"], "", "## " + headings["summary"], "",
-             "**" + text(readiness["verdict"]) + "**", ""]
+             "**" + text(verdict_label(readiness["verdict"], albanian)) + "**", ""]
     lines.extend(details(readiness.get("counts", {})))
     lines += ["", "## " + headings["requirements"], "",
               "| ID | Status |", "|---|---|"]

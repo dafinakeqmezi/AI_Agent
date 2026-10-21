@@ -10,6 +10,12 @@ REVIEW_STATUSES = {"PASS", "PARTIAL", "MISSING", "NOT_APPLICABLE", "BLOCKER"}
 RISK_LEVELS = {"NONE_FOUND", "NEEDS_REVIEW", "HIGH_CONCERN"}
 
 
+def verdict_label(verdict, albanian=False):
+    if verdict == "NOT_READY":
+        return "E papërfunduar" if albanian else "Not completed"
+    return verdict
+
+
 def validate_review(review: dict, reqs: list[dict], known_paths: set[str] | None,
                     known_commits: set[str] | None = None) -> list[str]:
     errors: list[str] = []
@@ -98,6 +104,7 @@ def evaluate(review_dir: Path) -> dict:
     verdict = "READY_FOR_FINAL_REVIEW" if not failed else "NOT_READY"
     result = {
         "verdict": verdict,
+        "verdict_label": verdict_label(verdict),
         "evaluated_at": now_iso(),
         "failed_conditions": failed,
         "validation_errors": errors,
@@ -110,9 +117,11 @@ def evaluate(review_dir: Path) -> dict:
     write_json(review_dir / "readiness.json", result)
 
     ada = identity("ml-reviewer")
-    lines = [f"# Readiness: {verdict}", "", f"Review by {ada['name']}, {ada['title']} (automated, Agent 1). "
+    lines = [f"# Project completion: {verdict_label(verdict)}", "", f"Review by {ada['name']}, {ada['title']} (automated, Agent 1). "
              "Verdict computed by the toolkit from the Definition of Done.", ""]
     if verdict == "NOT_READY":
+        lines += ["The review finished, but the project's completion requirements are not all satisfied. "
+                  "The project can still be frozen and graded.", ""]
         lines += [f"- {result['counts']['blockers']} blocker(s)", f"- {len(mandatory_not_pass)} mandatory requirement(s) not passing",
                   f"- {len(missing)} missing, {len(partial)} partial requirement(s)",
                   f"- {result['counts']['recommendations']} recommendation(s)", ""]
