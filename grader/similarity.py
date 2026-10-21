@@ -23,6 +23,8 @@ import tempfile
 from collections import defaultdict
 from pathlib import Path
 
+from . import provenance
+
 from .common import (DEFAULT_ASSIGNMENT, EVALUATIONS, INTEGRITY_FILE, SUBMISSIONS, assignment_files, iter_files,
                      load_json, now_iso, project_key, read_text_safe, rel, stamp, write_json, write_text)
 
@@ -184,7 +186,8 @@ def load_submission(sid: str, cfg: dict) -> dict:
     return {"sid": sid, "project": sub.get("project"), "student": sub.get("student"), "team": sub.get("team") or [],
             "code": dict(code_fp), "docs": dict(doc_fp), "lines": lines_cache,
             "files": {f["path"]: f for f in manifest.get("files", [])},
-            "commits": hist.get("commits") or [], "authors": hist.get("authors") or []}
+            "commits": hist.get("commits") or [], "authors": hist.get("authors") or [],
+            "source_path": sub.get("source_path")}
 
 
 def _base_fingerprints(base: Path | None, cfg: dict) -> set[int]:
@@ -244,7 +247,8 @@ def _containment(shared: set, a: dict, b: dict) -> tuple[float, float]:
 
 def _first_seen(commits: list[dict], path: str) -> str | None:
     dates = [c.get("author_date") for c in commits if path in (c.get("paths") or []) and c.get("author_date")]
-    return min(dates) if dates else None
+    dates = [d for d in dates if provenance.date(d)]
+    return min(dates, key=provenance.date) if dates else None
 
 
 def _own(s: dict, c: dict) -> bool:
@@ -256,7 +260,7 @@ def _own(s: dict, c: dict) -> bool:
     return c.get("identity") == top
 
 
-def _git(a: dict, b: dict, cfg: dict, common_files: set[str]) -> dict:
+def _git(a: dict, b: dict, cfg: dict, common_files: set[str], fragments=()) -> dict:
     shas_a = {c["sha"] for c in a["commits"] if not c.get("merge")}
     shared_commits = sorted(shas_a & {c["sha"] for c in b["commits"] if not c.get("merge")})
     foreign = []
@@ -281,7 +285,8 @@ def _git(a: dict, b: dict, cfg: dict, common_files: set[str]) -> dict:
                       if c.get("subject") and len(c["subject"].strip()) >= 15 and not GENERIC_MSG.match(c["subject"].strip())}
     return {"shared_commits": shared_commits[:20], "shared_commit_count": len(shared_commits),
             "foreign_identity_commits": foreign[:20], "identical_files": identical[:30],
-            "shared_commit_messages": sorted(msgs(a) & msgs(b))[:20]}
+            "shared_commit_messages": sorted(msgs(a) & msgs(b))[:20],
+            "provenance": provenance.compare(a, b, identical, fragments, cfg)}
 
 
 def _level(code_c: float, doc_c: float, git: dict, cfg: dict) -> tuple[str, list[str]]:
@@ -374,7 +379,16 @@ def run(assignment: str | None = None, ids: list[str] | None = None, base: Path 
         sc, sd = set(ca) & set(cb), set(da) & set(db)
         code_c, code_j = _containment(sc, ca, cb)
         doc_c, doc_j = _containment(sd, da, db)
-        git = _git(a, b, cfg, common_files)
+        fragment_pairs = defaultdict(set)
+        for fingerprint in sc:
+            for fa, *_ in ca[fingerprint]:
+                for fb, *_ in cb[fingerprint]:
+                    # Notebook positions refer to extracted cells, not a raw code blob.
+                    if Path(fa).suffix.lower() in CODE_EXT and Path(fb).suffix.lower() == Path(fa).suffix.lower():
+                        fragment_pairs[(fa, fb)].add(fingerprint)
+        fragments = [{"file_a": fa, "file_b": fb, "fingerprints": fingerprints}
+                     for (fa, fb), fingerprints in sorted(fragment_pairs.items(), key=lambda item: -len(item[1]))[:4]]
+        git = _git(a, b, cfg, common_files, fragments)
         level, reasons = _level(code_c, doc_c, git, cfg)
         pairs.append({
             "a": a["sid"], "b": b["sid"], "project_a": a["project"], "project_b": b["project"],
@@ -436,11 +450,22 @@ def render(r: dict) -> str:
                       "", "  ```", *["  " + ln for ln in x["quote_a"].splitlines()], "  ```"]
         g = p["git"]
         for f in g["identical_files"]:
-            L.append(f"- identical file: `{f['file_a']}` = `{f['file_b']}` ({f['bytes']} bytes); first seen A {f['first_seen_a'] or '?'}, B {f['first_seen_b'] or '?'}")
+            L.append(f"- identical file: `{f['file_a']}` = `{f['file_b']}` ({f['bytes']} bytes); earliest path-touch author date A {f['first_seen_a'] or '?'}, B {f['first_seen_b'] or '?'} (not evidence of this version's introduction)")
+        timeline = g.get("provenance")
+        if timeline:
+            L += ["", "### Matching-version commit timeline", "", timeline["method"], "",
+                  "A = " + name(p["a"]) + "; B = " + name(p["b"]), "",
+                  "| File A / File B | A commit / committer date | B commit / committer date | Recorded order |",
+                  "|---|---|---|---|"]
+            for entry in timeline["files"]:
+                show = lambda side: ((side.get("commit") or "unavailable") + " / " + (side.get("committer_date") or "unknown")
+                                     + (" (limited history)" if not side.get("history_complete") else ""))
+                L.append(f"| {entry['file_a']} / {entry['file_b']} ({entry.get('kind', 'EXACT_FILE')}) | {show(entry['a'])} | {show(entry['b'])} | {entry['recorded_order']} |")
+            L += ["", timeline["limitation"], "Copying direction: NOT ESTABLISHED.", ""]
         for c in g["foreign_identity_commits"]:
             L.append(f"- commit {c['commit']} in {c['commit_in']} authored by {c['identity']} (main author of {c['of']}), {c['date']}: {c['subject']}")
         if g["shared_commit_count"]:
-            L.append(f"- {g['shared_commit_count']} identical commit SHAs (copied history), e.g. {', '.join(s[:7] for s in g['shared_commits'][:5])}")
+            L.append(f"- {g['shared_commit_count']} identical commit SHAs (shared history; origin/direction not established), e.g. {', '.join(s[:7] for s in g['shared_commits'][:5])}")
         for m in g["shared_commit_messages"]:
             L.append(f"- identical commit message: \"{m}\"")
     return "\n".join(L) + "\n"

@@ -69,6 +69,26 @@ ranking views show saved aggregate results, which may include earlier runs.
 For comparisons that must exclude shared starter code, use the terminal's
 `similarity --base` option; the dashboard does not expose that option yet.
 
+New comparisons also include a **Matching-version commit timeline** for up to
+ten non-common identical files and four matching code-file pairs. The tool checks
+each frozen file's SHA-256 or the shared normalized code fingerprints against
+raw Git blobs from the recorded history and lists the earliest
+matching commit by committer date on each side, with author dates and identities.
+This distinguishes an old filename from the later arrival of matching content.
+The original local repositories/mirrors must still be available. History scans
+are bounded to 100 path-touching commits per file, 256 KB blobs and a five-second
+budget per submission; incomplete/unavailable history is labeled. Renamed files
+and changed identifiers can be compared through normalized fingerprints, marked
+separately from exact files. Historical paths are not followed across renames,
+and older versions missing some of the selected fingerprints may leave gaps.
+
+An earlier recorded version is an investigation lead, not proof that the later
+student copied it. Both Git timestamps can be edited; public push dates are not
+verified by this check. Shared sources, forks, authorized collaboration and
+disclosed reuse (including the two generated sample repositories) must be
+considered by the professor. Re-run **Compare selected submissions** to add the
+timeline to older comparison results. Scores remain unchanged.
+
 ## Results and progress
 
 Existing terminal-generated reviews and evaluations appear in the dashboard.

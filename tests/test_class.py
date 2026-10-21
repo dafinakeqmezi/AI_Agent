@@ -12,7 +12,7 @@ from unittest import mock
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from grader import freeze, ranking, score, similarity, state  # noqa: E402
+from grader import freeze, provenance, ranking, score, similarity, state  # noqa: E402
 from grader.common import assignment_files, list_assignments, load_json, write_json  # noqa: E402
 
 ORIGINAL = '''from collections import deque
@@ -251,6 +251,50 @@ class Similarity(Sandbox):
         self.assertIn("Sudoku BFS me backtracking", p["git"]["shared_commit_messages"])
         same = [f for f in p["git"]["identical_files"] if f["file_a"] == "sudoku.py"][0]
         self.assertLess(same["first_seen_a"], same["first_seen_b"])  # A had the file first
+        timeline = p["git"]["provenance"]
+        self.assertEqual(timeline["direction"], "NOT_ESTABLISHED")
+        evidence = next(f for f in timeline["files"] if f["file_a"] == "sudoku.py")
+        self.assertEqual(evidence["recorded_order"], "A_EARLIER")
+        self.assertTrue(evidence["a"]["history_complete"])
+        self.assertEqual(len(evidence["a"]["commit"]), 40)
+
+    def test_timeline_tracks_matching_content_not_filename_age(self):
+        src = self.tmp / "src" / "old_filename"
+        make_repo(src, {"sudoku.py": "# unrelated old content\n"},
+                  [("Create a different implementation", ("A", "a@example.edu"), "2026-10-01T10:00:00+00:00")])
+        (src / "sudoku.py").write_text(ORIGINAL)
+        git(src, "add", "sudoku.py")
+        git(src, "commit", "-q", "-m", "Replace with the matched version", date="2026-10-20T10:00:00+00:00")
+        a = freeze.freeze(src, student="A", assignment="detyra1")["submission_id"]
+        b = self.freeze("earlier_content", {"sudoku.py": ORIGINAL},
+                        [("Add the matched program", ("B", "b@example.edu"), "2026-10-10T10:00:00+00:00")])
+        r = similarity.run("detyra1", ids=[a, b], out=self.tmp / "out")
+        evidence = next(f for f in r["pairs"][0]["git"]["provenance"]["files"] if f["file_a"] == "sudoku.py")
+        self.assertEqual(evidence["recorded_order"], "B_EARLIER")
+        self.assertTrue(evidence["a"]["committer_date"].startswith("2026-10-20"))
+        self.assertIn("Copying direction: NOT ESTABLISHED", (self.tmp / "out/similarity.md").read_text())
+
+    def test_timeline_missing_objects_and_timezone_order_are_explicit(self):
+        a = self.freeze("no_git_a", {"main.py": ORIGINAL})
+        b = self.freeze("no_git_b", {"main.py": ORIGINAL})
+        r = similarity.run("detyra1", ids=[a, b], out=self.tmp / "out")
+        evidence = r["pairs"][0]["git"]["provenance"]["files"][0]
+        self.assertEqual(evidence["recorded_order"], "UNKNOWN")
+        self.assertFalse(evidence["a"]["history_complete"])
+        self.assertEqual(provenance.date("2026-10-10T12:00:00+02:00"), provenance.date("2026-10-10T10:00:00Z"))
+        self.assertIsNone(provenance.date("2026-10-10T10:00:00"))
+
+    def test_renamed_code_fragments_have_historical_observations(self):
+        a = self.freeze("code_a", {"solve.py": ORIGINAL},
+                        [("Implement the search algorithm", ("A", "a@example.edu"), "2026-10-01T10:00:00+00:00")])
+        b = self.freeze("code_b", {"other.py": RENAMED},
+                        [("Add a solver with different names", ("B", "b@example.edu"), "2026-10-15T10:00:00+00:00")])
+        r = similarity.run("detyra1", ids=[a, b], out=self.tmp / "out")
+        entries = r["pairs"][0]["git"]["provenance"]["files"]
+        matched = next(e for e in entries if e["kind"] == "NORMALIZED_CODE_FRAGMENTS")
+        self.assertEqual((matched["file_a"], matched["file_b"]), ("solve.py", "other.py"))
+        self.assertEqual(matched["recorded_order"], "A_EARLIER")
+        self.assertGreater(matched["shared_fingerprints"], 0)
 
 
 class Ranking(Sandbox):

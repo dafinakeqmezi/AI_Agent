@@ -404,8 +404,10 @@ ul.plain li { margin: 4px 0; }
       noSimilarity: "Nuk ka raport ngjashmërie për këtë detyrë. Ekzekuto: python -m grader similarity --assignment ",
       simNote: "Ngjashmëria është prioritet shqyrtimi për profesorin, JO provë kopjimi. Algoritmet e shkurtra standarde (p.sh. backtracking si në libër) natyrshëm ngjajnë; pjesët e përbashkëta për shumë studentë dhe kodi bazë i profesorit janë hequr nga krahasimi.",
       submissions: "Dorëzime", pairs: "çifte", reasons: "Arsyet", codeRegions: "Kod i përbashkët", textRegions: "Tekst i përbashkët",
-      identicalFiles: "Skedarë identikë", foreignCommits: "Commit-e të shkruara nga studenti tjetër", sharedCommits: "Commit-e identike (histori e kopjuar)",
-      sharedMessages: "Mesazhe identike commit-esh", firstSeen: "parë së pari", similarTo: "Ngjashmëri me studentë të tjerë",
+      identicalFiles: "Skedarë identikë", foreignCommits: "Commit-e të shkruara nga studenti tjetër", sharedCommits: "Commit-e identike (histori e përbashkët)",
+      timelineTitle: "Historiku i kodit të përbashkët", exactVersion: "Version identik i skedarit", normalizedFragments: "Fragmente kodi me emra të normalizuar", timelineNote: "Datat e commit-eve nuk provojnë autorësinë ose drejtimin e kopjimit. Kontrollo burimet e përbashkëta dhe bashkëpunimin. Pa objektet Git ose me përputhje vetëm të pjesshme, rendi mund të mbetet i panjohur.",
+      earlierA: "A ka versionin e regjistruar më herët", earlierB: "B ka versionin e regjistruar më herët", sameTime: "E njëjta kohë e regjistruar", unknownOrder: "Rendi i panjohur", limitedHistory: "Historik i kufizuar ose i padisponueshëm",
+      sharedMessages: "Mesazhe identike commit-esh", firstSeen: "prekja e parë e shtegut (jo ky version)", similarTo: "Ngjashmëri me studentë të tjerë",
       noPairs: "Asnjë çift me ngjashmëri mbi pragun.", codeShort: "kodi", textShort: "teksti", openSim: "shih krahasimin",
       generatedSim: "Raporti", ignoredCommon: "fragmente të përbashkëta të hequra"
     },
@@ -442,8 +444,10 @@ ul.plain li { margin: 4px 0; }
       noSimilarity: "No similarity report for this assignment. Run: python -m grader similarity --assignment ",
       simNote: "Similarity is a review priority for the professor, NOT proof of copying. Short standard algorithms (textbook backtracking) are naturally similar; fragments common to many students and the professor's base code are excluded.",
       submissions: "Submissions", pairs: "pairs", reasons: "Reasons", codeRegions: "Shared code", textRegions: "Shared text",
-      identicalFiles: "Identical files", foreignCommits: "Commits authored by the other student", sharedCommits: "Identical commits (copied history)",
-      sharedMessages: "Identical commit messages", firstSeen: "first seen", similarTo: "Similarity with other students",
+      identicalFiles: "Identical files", foreignCommits: "Commits authored by the other student", sharedCommits: "Identical commits (shared history)",
+      timelineTitle: "Matching-version commit timeline", exactVersion: "Identical file version", normalizedFragments: "Code fragments with normalized names", timelineNote: "Commit dates do not prove authorship or copying direction. Check shared sources and collaboration. Missing Git objects or partial matches may leave order unknown.",
+      earlierA: "A has the earlier recorded version", earlierB: "B has the earlier recorded version", sameTime: "Same recorded time", unknownOrder: "Unknown order", limitedHistory: "Limited or unavailable history",
+      sharedMessages: "Identical commit messages", firstSeen: "first path touch (not this version)", similarTo: "Similarity with other students",
       noPairs: "No pair above the threshold.", codeShort: "code", textShort: "text", openSim: "see comparison",
       generatedSim: "Report", ignoredCommon: "common fragments removed"
     }
@@ -847,6 +851,14 @@ ul.plain li { margin: 4px 0; }
       if (g.shared_commit_count) gl.push("<li><b>" + esc(T("sharedCommits")) + ":</b> " + esc(g.shared_commit_count) + " (" + esc(g.shared_commits.slice(0, 5).map(function (z) { return z.slice(0, 7); }).join(", ")) + ")</li>");
       g.shared_commit_messages.forEach(function (m) { gl.push("<li><b>" + esc(T("sharedMessages")) + ":</b> “" + esc(m) + "”</li>"); });
       if (gl.length) h += '<h3 style="margin-top:12px">Git</h3><ul class="plain">' + gl.join("") + "</ul>";
+      if (g.provenance) {
+        h += '<h3>' + esc(T("timelineTitle")) + '</h3><p class="small">A: ' + esc(simLabel(S, x.a)) + " · B: " + esc(simLabel(S, x.b)) + '</p><p class="small muted">' + esc(T("timelineNote")) + '</p>';
+        (g.provenance.files || []).forEach(function (f) {
+          var order = {A_EARLIER: "earlierA", B_EARLIER: "earlierB", SAME_RECORDED_TIME: "sameTime", UNKNOWN: "unknownOrder"};
+          var side = function (s) {return '<code>' + esc((s.commit || "?").slice(0, 12)) + '</code> · ' + esc(s.committer_date || "?") + '<br><span class="muted small">author: ' + esc(s.author || s.identity || "?") + ' · ' + esc(s.author_date || "?") + (!s.history_complete ? ' · ' + esc(T("limitedHistory")) : '') + '</span>';};
+          h += '<div class="section"><b>' + esc(T(order[f.recorded_order] || "unknownOrder")) + '</b> <span class="small muted">' + esc(T(f.kind === "NORMALIZED_CODE_FRAGMENTS" ? "normalizedFragments" : "exactVersion")) + '</span><div class="cmp"><div><code>' + esc(f.file_a) + '</code><br>A: ' + side(f.a) + '</div><div><code>' + esc(f.file_b) + '</code><br>B: ' + side(f.b) + '</div></div></div>';
+        });
+      }
       h += "</div>";
     });
     h += '<div class="muted small" style="margin-top:8px"><i>' + esc(S.disclaimer) + "</i></div></div>";
