@@ -1,6 +1,6 @@
 # Live dashboard
 
-Run from the repository root:
+Start the dashboard from the repository root:
 
 ```sh
 python3 -m grader dashboard --serve
@@ -14,15 +14,89 @@ a fixed port or open the browser yourself:
 python3 -m grader dashboard --serve --port 8765 --no-open
 ```
 
+## Professor access
+
+Open the printed URL. On the first run, the browser shows **Create professor
+account** with username, password and confirmation fields. After creating it,
+sign in. Once the first account exists, setup closes and visitors must sign in.
+There is no default password or open registration.
+
+While signed in, select **Invite professor** in the dashboard header to create
+another account on a dedicated page. Account forms are separate from review controls
+and share the dashboard’s colors, typography and saved theme. Each professor has a separate workspace: repositories, students,
+reviews, frozen submissions, grades, rankings, similarity reports, logs and jobs.
+Professors can register the same GitHub repository independently. One job can run
+per professor, so different professors can work concurrently.
+
+For terminal-based account creation or password recovery, you can still use:
+
+```sh
+python3 -m grader professor-account another-professor
+```
+
+Passwords must contain at least 12 characters. Salted PBKDF2 password hashes are
+stored in the ignored `state/professors.json`, with owner-only file permissions.
+Each account can access only its own dashboard data and job controls. Password resets
+invalidate that account's existing sessions. Sessions expire after eight hours;
+**Sign out** in the header immediately revokes the current session. Five sign-in attempts per
+minute are allowed across the local server. Restarting the server signs everyone
+out; signing out does not stop a running job.
+
+All live pages, report downloads, and APIs require a session. The server binds
+to loopback; public hosting requires an HTTPS reverse proxy (see below). A person
+with access to the underlying files can still read them. Exported static
+`dashboard.html` snapshots contain student data and have no login protection:
+keep them private and remove old exports if they are no longer needed.
+
+## Professor storage and hosting
+
+Data lives under `state/professor-data/<account-id>/`, where the ID is derived
+from the authenticated username. The server chooses this directory; request
+parameters cannot select a different professor. Downloads and job IDs are also
+scoped to that account. Back up the entire `state/` tree and protect filesystem
+access. Course materials and rubrics are shared, while student data is separate.
+Existing root-level results and rosters are preserved and are **not** assigned
+or exposed to any professor automatically. Terminal runs without a data-root
+setting still use the legacy root-level workspace.
+
+To use the terminal with one professor's workspace, set `GRADER_DATA_ROOT` to its
+absolute storage directory before running grader commands. Dashboard workers
+set it automatically; it does not change the shared academic rules.
+
+For hosting, create the first account through the local browser first. Then put
+an HTTPS reverse proxy in front of the loopback server and configure the exact
+public origin:
+
+```sh
+export GRADER_PUBLIC_URL=https://grader.example.edu
+python3 -m grader dashboard --serve --port 8765 --no-open
+```
+
+Configure the proxy to forward to `127.0.0.1:8765`, preserve the original `Host`
+header, and terminate HTTPS. The configured origin is checked on requests;
+cookies use `Secure` in this mode. Hosted mode refuses to start without an
+existing professor account, preventing public first-account registration.
+Run a **single server process**: sessions and job tracking are in memory. A restart
+requires signing in again. This change prepares account isolation and proxy
+configuration; it does not deploy a server, set up TLS, or provide high availability.
+Provider credentials and CLI sign-ins remain configured by the server operator;
+separate professor model accounts and billing are not implemented.
+
 ## Review repositories
 
 Expand **Run reviews and comparisons** to access the controls. The panel starts
 collapsed to keep saved results visible. Repository registration and freeze
 options expand separately; job status and stop controls remain visible.
 
-1. Enter a GitHub URL (or `owner/repo`), student name and assignment, then click
+1. Enter a GitHub URL (or `owner/repo`), student name, assignment and Git branch (default **main**), then click
    **Add repository**. Repeat for each repository. This saves the local roster
-   without running a model.
+   without running a model. Saved repository labels show the branch. The branch
+   is used for both reviews and freezes. A nonexistent branch produces a fetch
+   error; the tool does not silently switch to another branch.
+
+   From the terminal, use `python3 -m grader roster add owner/repo --student "Name" --assignment detyra1 --branch develop`.
+   To change an already registered repository's branch, update its `ref` in
+   `projects/roster.json` inside that professor’s storage directory while no job is running.
 2. Check the saved repositories you want to review.
 3. Choose ChatGPT subscription (Codex), Claude subscription (Claude Code),
    OpenAI API or Claude API. Enter a model available to that account, or leave
@@ -51,8 +125,8 @@ credentials and model availability are verified during the actual run.
 ## Freeze, grade and compare
 
 Select saved repositories and click **Freeze selected repositories** to create
-immutable submissions. Without a deadline or saved ref, this captures the
-current default-branch version. An optional deadline must include a timezone,
+immutable submissions from the saved branch, defaulting to `main` for roster
+entries without a ref. An optional deadline must include a timezone,
 for example `2026-11-01T23:59:00+01:00`. Existing roster refs and deadlines are
 preserved; a saved deadline takes precedence over the dashboard input.
 
@@ -106,15 +180,17 @@ timeline to older comparison results. Scores remain unchanged.
 
 ## Results and progress
 
-Existing terminal-generated reviews and evaluations appear in the dashboard.
+Terminal-generated reviews and evaluations appear when created with that
+professor’s `GRADER_DATA_ROOT`. Legacy root-level records are not exposed to
+professor accounts.
 The live page refreshes saved results every three seconds. Only one dashboard
-job runs at a time; **Stop current job** cancels its process tree on macOS/Linux
+job per professor runs at a time; **Stop current job** cancels its process tree on macOS/Linux
 and prevents further commands in that job. Completed artifacts remain on disk.
 Run terminal jobs separately only when you intend them to run concurrently.
 
 The panel shows the latest job's scope, log, elapsed time, and token totals after
 a model run finishes when the provider reports usage. Job logs and summaries are
-stored under `state/dashboard-jobs/`; the live job panel lists jobs started in
+stored under each professor’s `state/dashboard-jobs/`; the live job panel lists jobs started in
 the current server session. Historical academic results remain in the project
 views after restarting the server.
 

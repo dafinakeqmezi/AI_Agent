@@ -18,10 +18,10 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .common import ROOT, load_json, now_iso, write_json
+from .common import DATA_ROOT, ROOT, load_json, now_iso, write_json
 
 API = "https://api.github.com"
-MIRRORS = ROOT / "projects"
+MIRRORS = DATA_ROOT / "projects"
 MARKER = "grader-mirror.json"  # stored inside .git/, so it never appears in the project files
 REPO_RE = re.compile(r"^(?:https?://github\.com/|git@github\.com:)?([A-Za-z0-9-]+)/([A-Za-z0-9._-]+?)(?:\.git)?/?$")
 

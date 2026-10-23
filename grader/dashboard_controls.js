@@ -39,6 +39,7 @@
       <form id="live-add">
         <div class="fields">
           <label>GitHub URL or owner/repo<input id="live-repo" required placeholder="owner/repository"></label>
+          <label>Git branch<input id="live-branch" value="main" placeholder="main" required></label>
           <label>Student name<input id="live-student" required></label>
           <label>Assignment<select id="live-assignment"></select></label>
         </div>
@@ -66,7 +67,7 @@
       <div class="buttons"><button id="live-review" class="btn">Review selected repositories</button></div>
       <details class="secondary"><summary>Freeze repositories for grading</summary>
       <div class="fields"><label>Freeze deadline (optional, with timezone)<input id="live-deadline" placeholder="2026-11-01T23:59:00+01:00"></label></div>
-      <p class="small muted">Freezing captures the current default-branch version unless a deadline or saved ref is supplied. Grading is a separate action.</p>
+      <p class="small muted">Freezing captures the saved branch (main by default), using the deadline when supplied. Grading is a separate action.</p>
       <div class="buttons"><button id="live-freeze" class="btn">Freeze selected repositories</button></div>
       </details>
       </div><div>
@@ -83,6 +84,11 @@
       <pre id="live-log" hidden></pre>
     </div>`;
   document.querySelector(".wrap").insertBefore(panel, document.getElementById("app"));
+  const invite = document.createElement("a");
+  invite.className = "btn"; invite.href = "/professors/new"; invite.textContent = "Invite professor";
+  const logout = document.createElement("button");
+  logout.id = "live-logout"; logout.className = "btn"; logout.type = "button"; logout.textContent = "Sign out";
+  document.querySelector(".top-actions").append(invite, logout);
   const el = id => document.getElementById("live-" + id);
   let state, busy = false, fetching = false, signature = "", submissionSignature = "";
   let latestJob;
@@ -91,6 +97,7 @@
     const response = await fetch(path, {method: body ? "POST" : "GET", headers: {
       "X-Dashboard-Token": config.token, "Content-Type": "application/json"
     }, body: body ? JSON.stringify(body) : undefined});
+    if (response.status === 401) { window.location.assign("/login"); throw new Error("Session expired. Sign in again."); }
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Request failed");
     return result;
@@ -142,7 +149,7 @@
       const roster = state.roster.students;
       const nextSignature = JSON.stringify(roster);
       if (nextSignature !== signature) {
-        choices("repos", roster.map(r => ({value: r.repo, label: (r.student || r.repo) + " · " + r.repo + " · " + (r.assignment || state.roster.assignment || "assignment missing")})));
+        choices("repos", roster.map(r => ({value: r.repo, label: (r.student || r.repo) + " · " + r.repo + " [" + (r.ref || "main") + "] · " + (r.assignment || state.roster.assignment || "assignment missing")})));
         signature = nextSignature;
       }
       const subs = state.data.projects.flatMap(p => p.submissions.map(s => ({value: s.id, label: (s.student || p.student || p.name) + " · " + s.id + " · " + s.assignment})));
@@ -185,12 +192,16 @@
   el("add").onsubmit = async event => {
     event.preventDefault(); el("error").textContent = "";
     try {
-      await api("/api/repos", {repo: el("repo").value.trim(), student: el("student").value.trim(), assignment: el("assignment").value});
+      await api("/api/repos", {repo: el("repo").value.trim(), student: el("student").value.trim(), assignment: el("assignment").value, branch: el("branch").value.trim() || "main"});
       el("repo").value = ""; el("student").value = ""; await refresh();
     } catch (error) { el("error").textContent = error.message; }
   };
   ["review", "freeze", "grade"].forEach(action => el(action).onclick = () => start(action));
   el("compare").onclick = () => start("similarity");
+  el("logout").onclick = async () => {
+    try { await api("/api/logout", {}); window.location.assign("/login"); }
+    catch (error) { el("error").textContent = error.message; }
+  };
   el("refresh").onclick = refresh;
   el("stop").onclick = async () => {
     try { if (latestJob) await api("/api/stop", {id: latestJob.id}); await refresh(); }

@@ -76,7 +76,11 @@ States: `DRAFT → UNDER_REVIEW → READY_FOR_FINAL_REVIEW → FINAL_SUBMISSION 
 
 ## Toolkit CLI (`python -m grader …`)
 
-Open the interactive local dashboard with `python3 -m grader dashboard --serve`.
+Open the local dashboard with `python3 -m grader dashboard --serve`.
+Create the first professor login in the browser, then sign in. Signed-in
+professors can select **Invite professor** in the header to add another account. Each professor
+has separate repositories, reviews, grades and jobs. All live pages,
+reports and API controls require login. Static HTML exports are unprotected.
 Add repositories, select a provider and model, run reviews, freeze and grade
 submissions, and compare frozen submissions for similarity. Saved results refresh
 automatically. See the [dashboard guide](docs/dashboard.md) for setup and controls.
@@ -123,6 +127,8 @@ considered; similarity never changes scores automatically. See the
 
 Add repositories through interactive input with `python3 -m grader roster add`.
 Enter the repository URL, student name, and assignment ID; repeat for each repo.
+The Git branch defaults to `main`; pass `--branch develop` to choose another.
+The dashboard also offers a branch field when adding a repository.
 Use `python3 -m grader roster list` to view the saved roster. See the
 [AI tools guide](docs/ai-tools.md) for reviewing these saved entries.
 

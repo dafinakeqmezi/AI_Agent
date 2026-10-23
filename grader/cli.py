@@ -9,7 +9,7 @@ from pathlib import Path
 
 from . import (benchmark, books, cite, dashboard, expected, freeze, github, history, override, ranking, readiness,
                roster, score, similarity, state)
-from .common import (EVALUATIONS, REVIEWS, ROOT, STATES, SUBMISSIONS, assignment_files, list_assignments,
+from .common import (DATA_ROOT, EVALUATIONS, REVIEWS, ROOT, STATES, SUBMISSIONS, assignment_files, list_assignments,
                      load_json, now_iso, project_key, stamp, write_json)
 from .inventory import build_inventory
 from .scan import scan
@@ -147,7 +147,7 @@ def cmd_roster_add(a):
         if assignment is None:
             print("Available assignments: " + ", ".join(list_assignments()))
             assignment = input("Assignment ID: ").strip()
-        entry = roster.add(Path(a.roster), repo, student, assignment)
+        entry = roster.add(Path(a.roster), repo, student, assignment, getattr(a, "branch", "main"))
     except (EOFError, KeyboardInterrupt):
         sys.exit("Input cancelled; roster was not changed.")
     except (ValueError, OSError) as e:
@@ -404,7 +404,7 @@ def main(argv=None) -> int:
         p.add_argument("--dry-run", action="store_true", help="check scope without API calls or starting runs")
         p.add_argument("--offline", action="store_true", help="skip preparation's external citation checks; API/GitHub still need network")
         if name == "review-all":
-            p.add_argument("--roster", default="projects/roster.json")
+            p.add_argument("--roster", default=str(DATA_ROOT / "projects" / "roster.json"))
             p.add_argument("--assignment", help="fallback when a roster entry has no assignment")
         else:
             p.add_argument("--submissions", required=True, help="comma-separated frozen IDs; does not freeze repos")
@@ -416,10 +416,11 @@ def main(argv=None) -> int:
     p.add_argument("repo", nargs="?")
     p.add_argument("--student")
     p.add_argument("--assignment")
-    p.add_argument("--roster", default="projects/roster.json")
+    p.add_argument("--roster", default=str(DATA_ROOT / "projects" / "roster.json"))
+    p.add_argument("--branch", default="main", help="Git branch to fetch (default: main)")
     p.set_defaults(fn=cmd_roster_add)
     p = rsp.add_parser("list", help="show saved repositories")
-    p.add_argument("--roster", default="projects/roster.json")
+    p.add_argument("--roster", default=str(DATA_ROOT / "projects" / "roster.json"))
     p.set_defaults(fn=cmd_roster_list)
 
     gh = sp.add_parser("github", help="GitHub: list student repos, freeze all repos of a roster at the deadline")
@@ -429,7 +430,7 @@ def main(argv=None) -> int:
     p.add_argument("--write-roster", metavar="FILE", help="write a roster template, e.g. projects/roster.json")
     p.add_argument("--deadline"); p.set_defaults(fn=cmd_github_repos)
     p = gsp.add_parser("freeze-all", help="freeze every repo in a roster at the deadline commit")
-    p.add_argument("--roster", default="projects/roster.json"); p.add_argument("--deadline")
+    p.add_argument("--roster", default=str(DATA_ROOT / "projects" / "roster.json")); p.add_argument("--deadline")
     p.add_argument("--assignment", help="assignment id for every repo (else the roster's 'assignment')")
     p.add_argument("--max-file-mb", type=float, default=200.0); p.set_defaults(fn=cmd_github_freeze_all)
 
@@ -501,6 +502,16 @@ def main(argv=None) -> int:
     p.add_argument("--assignment", help="assignment id (default ml-project)")
     p.add_argument("--roster", help="limit to the repos in this roster (default: the class of the latest similarity run)")
     p.set_defaults(fn=cmd_ranking)
+
+    p = sp.add_parser("professor-account", help="create or reset a local professor dashboard login")
+    p.add_argument("username")
+    def configure_professor(a):
+        from .dashboard_auth import configure
+        try:
+            configure(a.username)
+        except (ValueError, EOFError) as error:
+            sys.exit(str(error))
+    p.set_defaults(fn=configure_professor)
 
     p = sp.add_parser("dashboard", help="build the local read-only HTML dashboard (dashboard.html) and open it")
     p.add_argument("--out", default=str(dashboard.DEFAULT_OUT))

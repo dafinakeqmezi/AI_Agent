@@ -9,9 +9,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from . import similarity
-from .common import EVALUATIONS, ROOT, SUBMISSIONS, assignment_files, load_json, now_iso, stamp, write_json, write_text
+from .common import DATA_ROOT, EVALUATIONS, ROOT, SUBMISSIONS, assignment_files, load_json, now_iso, stamp, write_json, write_text
 
-STUDENTS_FILE = ROOT / "projects" / "students.json"
+STUDENTS_FILE = DATA_ROOT / "projects" / "students.json"
 LEVEL_ORDER = ["NONE", "LOW", "MEDIUM", "HIGH"]
 
 

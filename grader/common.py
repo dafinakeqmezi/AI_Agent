@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+DATA_ROOT = Path(os.environ.get("GRADER_DATA_ROOT") or ROOT).resolve()
 KB = ROOT / "knowledge-base"
 REQUIREMENTS_FILE = KB / "requirements" / "requirements.json"
 DOD_FILE = KB / "requirements" / "dod.json"
@@ -16,10 +17,10 @@ RUBRIC_FILE = KB / "rubric" / "rubric.json"
 INTEGRITY_FILE = KB / "policies" / "integrity-policy.json"
 KB_MANIFEST_FILE = KB / "manifest.json"
 AGENTS_DIR = ROOT / ".claude" / "agents"
-SUBMISSIONS = ROOT / "submissions"
-REVIEWS = ROOT / "reviews"
-EVALUATIONS = ROOT / "evaluations"
-STATE_FILE = ROOT / "state" / "registry.json"
+SUBMISSIONS = DATA_ROOT / "submissions"
+REVIEWS = DATA_ROOT / "reviews"
+EVALUATIONS = DATA_ROOT / "evaluations"
+STATE_FILE = DATA_ROOT / "state" / "registry.json"
 
 # Assignments: each has its own requirements/rubric/DoD. The ML project keeps the historical paths above;
 # every other assignment lives in knowledge-base/assignments/<id>/ (assignment.json, requirements.json, rubric.json, dod.json).
@@ -33,7 +34,7 @@ def assignment_files(assignment: str | None = None) -> dict:
         return {"id": aid, "dir": None, "meta": None, "requirements": REQUIREMENTS_FILE, "rubric": RUBRIC_FILE,
                 "dod": DOD_FILE}
     d = ASSIGNMENTS_DIR / aid
-    if not (d / "assignment.json").exists():
+    if aid not in list_assignments() or not (d / "assignment.json").exists():
         known = ", ".join(list_assignments())
         raise SystemExit(f"Unknown assignment {aid!r}. Known: {known}")
     return {"id": aid, "dir": d, "meta": d / "assignment.json", "requirements": d / "requirements.json",

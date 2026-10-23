@@ -26,6 +26,13 @@ class RosterTests(unittest.TestCase):
         self.assertEqual(saved["students"][1]["student"], "New")
         self.assertEqual(saved["students"][1]["assignment"], "detyra1")
 
+    def test_branch_defaults_and_custom_branch(self):
+        self.assertEqual(roster.add(self.path, "owner/main", "Main", "detyra1")["ref"], "main")
+        self.assertEqual(roster.add(self.path, "owner/feature", "Feature", "detyra1", "feature/review")["ref"], "feature/review")
+        for branch in ("-bad", "x..y", "x y", "foo.lock", "foo/", "a@{b", "a\\b", "a\nb"):
+            with self.subTest(branch=branch), self.assertRaises(ValueError):
+                roster.add(self.path, "owner/bad", "Name", "detyra1", branch)
+
     def test_duplicate_does_not_overwrite(self):
         roster.add(self.path, "owner/repo", "First", "detyra1")
         before = self.path.read_bytes()
@@ -37,6 +44,7 @@ class RosterTests(unittest.TestCase):
         for repo, student, assignment in [("https://example.com/o/r", "Name", "detyra1"),
                                            ("owner/repo", " ", "detyra1"),
                                            ("owner/..", "Name", "detyra1"),
+                                           ("owner/repo", "Name", "../assignments/detyra1"),
                                            ("owner/repo", "Name", "unknown-assignment")]:
             with self.subTest(repo=repo, student=student, assignment=assignment):
                 with self.assertRaises((ValueError, SystemExit)):

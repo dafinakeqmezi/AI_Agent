@@ -15,12 +15,12 @@ import webbrowser
 from pathlib import Path
 
 from . import ranking, similarity, state
-from .common import (DEFAULT_ASSIGNMENT, EVALUATIONS, INTEGRITY_FILE, KB, REVIEWS, ROOT, STATES, SUBMISSIONS,
+from .common import (DATA_ROOT, DEFAULT_ASSIGNMENT, EVALUATIONS, INTEGRITY_FILE, KB, REVIEWS, ROOT, STATES, SUBMISSIONS,
                      assignment_files, list_assignments, load_json, now_iso, write_text)
 
 DEFAULT_OUT = ROOT / "dashboard.html"
-ROSTER_FILE = ROOT / "projects" / "roster.json"
-STUDENTS_FILE = ROOT / "projects" / "students.json"  # {"students": {"<project key>": "<name>"}}; display names only
+ROSTER_FILE = DATA_ROOT / "projects" / "roster.json"
+STUDENTS_FILE = DATA_ROOT / "projects" / "students.json"  # {"students": {"<project key>": "<name>"}}; display names only
 TEXT_MAX = 400
 
 

@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+from http.cookies import SimpleCookie, CookieError
 import mimetypes
 import os
 import re
@@ -16,9 +18,9 @@ import webbrowser
 from types import SimpleNamespace
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import unquote, urlsplit, parse_qs
 
-from . import dashboard, github, roster
+from . import dashboard, dashboard_accounts, dashboard_auth, github, roster
 from .common import ROOT, REVIEWS, EVALUATIONS, SUBMISSIONS, assignment_files, load_json, now_iso, write_json
 
 
@@ -51,7 +53,13 @@ def integer(data, key, default, minimum, maximum):
 
 
 class Jobs:
-    def __init__(self):
+    def __init__(self, root=None):
+        self.root = Path(root) if root is not None else ROOT
+        self.roster_file = self.root / "projects" / "roster.json" if root is not None else dashboard.ROSTER_FILE
+        self.submissions = self.root / "submissions" if root is not None else SUBMISSIONS
+        self.reviews = self.root / "reviews" if root is not None else REVIEWS
+        self.evaluations = self.root / "evaluations" if root is not None else EVALUATIONS
+        self.env = dict(os.environ, GRADER_DATA_ROOT=str(self.root))
         self.lock = threading.RLock()
         self.jobs = {}
 
@@ -65,13 +73,14 @@ class Jobs:
         names = data.get("repos")
         if not isinstance(names, list) or not names or not all(isinstance(s, str) for s in names):
             raise ValueError("Select at least one saved repository")
-        saved = roster.read(dashboard.ROSTER_FILE)
+        saved = roster.read(self.roster_file)
         by_repo = {s["repo"]: s for s in saved["students"]}
         if any(name not in by_repo for name in names):
             raise ValueError("Selected repository is not in the saved roster")
         entries = []
         for name in dict.fromkeys(names):
             entry = dict(by_repo[name])
+            entry["ref"] = entry.get("ref") or "main"
             entry["assignment"] = entry.get("assignment") or saved.get("assignment")
             if not entry["assignment"]:
                 raise ValueError(f"Set an assignment for {name} before running")
@@ -87,8 +96,8 @@ class Jobs:
         for sid in dict.fromkeys(ids):
             if Path(sid).name != sid or sid in {".", ".."} or "\\" in sid:
                 raise ValueError("Invalid submission ID")
-            path = SUBMISSIONS / sid / "submission.json"
-            if not path.is_file() or not path.resolve().is_relative_to(SUBMISSIONS.resolve()):
+            path = self.submissions / sid / "submission.json"
+            if not path.is_file() or not path.resolve().is_relative_to(self.submissions.resolve()):
                 raise ValueError(f"Unknown frozen submission: {sid}")
             metadata.append({**load_json(path), "submission_id": sid})
         return metadata
@@ -148,7 +157,7 @@ class Jobs:
             if self.active():
                 raise ValueError("A job is already running. Wait or stop it before starting another.")
             job_id = uuid.uuid4().hex
-            directory = ROOT / "state" / "dashboard-jobs" / job_id
+            directory = self.root / "state" / "dashboard-jobs" / job_id
             commands = self.commands(data, directory)
             directory.mkdir(parents=True, exist_ok=True)
             job = {"id": job_id, "action": data["action"], "status": "queued", "created_at": now_iso(),
@@ -169,7 +178,7 @@ class Jobs:
                     with self.lock:
                         if job["cancel"].is_set():
                             break
-                        process = subprocess.Popen(command, cwd=ROOT, stdout=subprocess.PIPE,
+                        process = subprocess.Popen(command, cwd=ROOT, env=self.env, stdout=subprocess.PIPE,
                                                    stderr=subprocess.STDOUT, text=True, bufsize=1,
                                                    start_new_session=os.name != "nt")
                         job["process"] = process
@@ -196,13 +205,12 @@ class Jobs:
                 job["usage"] = self.usage(job["log"])
                 write_json(directory / "job.json", self.public(job))
 
-    @staticmethod
-    def usage(log):
+    def usage(self, log):
         directories = set()
         for match in re.finditer(r'"(?:review_dir|evaluation_dir)":\s*("(?:[^"\\]|\\.)*")', log):
             try:
                 path = Path(json.loads(match.group(1))).resolve()
-                if any(path.is_relative_to(root.resolve()) for root in (REVIEWS, EVALUATIONS)):
+                if any(path.is_relative_to(root.resolve()) for root in (self.reviews, self.evaluations)):
                     directories.add(path)
             except (ValueError, OSError):
                 pass
@@ -258,18 +266,46 @@ class Jobs:
 class Server(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, port=0):
+    def __init__(self, port=0, auth=None, data_dir=None):
+        self.auth = auth if auth is not None else dashboard_auth.prepare()
+        public_url = os.environ.get("GRADER_PUBLIC_URL", "").rstrip("/")
+        public = urlsplit(public_url)
+        if public_url and (public.scheme != "https" or not public.hostname or public.username or public.password
+                           or public.path or public.query or public.fragment):
+            raise ValueError("GRADER_PUBLIC_URL must be an HTTPS origin, such as https://grader.example.edu")
+        if public_url and self.auth.needs_setup():
+            raise ValueError("Create the first professor account locally before enabling GRADER_PUBLIC_URL")
+        self.public_url = public_url
+        self.public_host = public.netloc
+        self.cookie_security = "; Secure" if public_url else ""
         super().__init__(("127.0.0.1", port), Handler)
         self.token = secrets.token_urlsafe(32)
-        self.jobs = Jobs()
-        self.url = f"http://127.0.0.1:{self.server_port}"
+        self.data_dir = Path(data_dir) if data_dir is not None else ROOT / "state" / "professor-data"
+        self.workspaces = {}
+        self.workspace_lock = threading.RLock()
+        self.url = public_url or f"http://127.0.0.1:{self.server_port}"
+
+    def workspace(self, username):
+        # The identity comes exclusively from a validated server-side session.
+        key = hashlib.sha256(username.encode()).hexdigest()
+        with self.workspace_lock:
+            if key not in self.workspaces:
+                root = self.data_dir / key
+                root.mkdir(parents=True, exist_ok=True, mode=0o700)
+                self.workspaces[key] = Jobs(root)
+            return self.workspaces[key]
+
+    def collect(self, workspace):
+        result = subprocess.run([sys.executable, "-m", "grader.dashboard_snapshot"], cwd=ROOT,
+                                env=workspace.env, capture_output=True, text=True, timeout=30, check=True)
+        return json.loads(result.stdout)
 
 
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass
 
-    def respond(self, status, body, kind="application/json; charset=utf-8"):
+    def respond(self, status, body, kind="application/json; charset=utf-8", headers=None):
         if not isinstance(body, bytes):
             body = (json.dumps(body, ensure_ascii=False) if kind.startswith("application/json") else body).encode()
         self.send_response(status)
@@ -278,11 +314,15 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Content-Security-Policy", "frame-ancestors 'none'")
+        for key, value in (headers or {}).items():
+            self.send_header(key, value)
         self.end_headers()
         self.wfile.write(body)
 
     def permitted(self, api=False):
-        if self.headers.get("Host") not in {f"127.0.0.1:{self.server.server_port}", f"localhost:{self.server.server_port}"}:
+        hosts = {self.server.public_host} if self.server.public_url else {
+            f"127.0.0.1:{self.server.server_port}", f"localhost:{self.server.server_port}"}
+        if self.headers.get("Host") not in hosts:
             self.respond(403, {"error": "Invalid host"})
             return False
         origin = self.headers.get("Origin")
@@ -294,37 +334,108 @@ class Handler(BaseHTTPRequestHandler):
             return False
         return True
 
+    def session(self):
+        try:
+            cookies = SimpleCookie(self.headers.get("Cookie", ""))
+            return cookies["professor_session"].value if "professor_session" in cookies else ""
+        except CookieError:
+            return ""
+
+    def authenticated(self, path):
+        try:
+            username = self.server.auth.identity(self.session())
+            valid = username is not None
+        except (OSError, ValueError, KeyError, TypeError):
+            valid = False
+        if valid:
+            self.workspace = self.server.workspace(username)
+            return True
+        if path.startswith("/api/") or self.command != "GET":
+            self.respond(401, {"error": "Professor sign-in required"})
+        else:
+            self.respond(303, "", "text/plain", {"Location": "/setup" if self.server.auth.needs_setup() else "/login"})
+        return False
+
+    def login_page(self, error="", status=200, setup=False):
+        self.respond(status, dashboard_accounts.render(self.server.token,
+                     mode="setup" if setup else "login", error=error), "text/html; charset=utf-8")
+
+    def login(self, setup=False):
+        if self.server.auth.needs_setup() != setup:
+            self.respond(303, "", "text/plain", {"Location": "/setup" if self.server.auth.needs_setup() else "/login"})
+            return
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+            if not 0 < length <= 8192:
+                raise ValueError("Invalid sign-in request")
+            fields = parse_qs(self.rfile.read(length).decode())
+            if not secrets.compare_digest(fields.get("csrf", [""])[0], self.server.token):
+                self.respond(403, {"error": "Invalid sign-in form; reload the page"})
+                return
+            if setup:
+                self.server.auth.create_account(fields.get("username", [""])[0], fields.get("password", [""])[0],
+                                                fields.get("confirmation", [""])[0], first=True)
+                self.respond(303, "", "text/plain", {"Location": "/login"})
+                return
+            token = self.server.auth.login(fields.get("username", [""])[0], fields.get("password", [""])[0])
+            if not token:
+                self.login_page("Invalid username or password", 401)
+                return
+            self.respond(303, "", "text/plain", {"Location": "/", "Set-Cookie":
+                f"professor_session={token}; HttpOnly; SameSite=Strict; Path=/" + self.server.cookie_security})
+        except ValueError as error:
+            self.login_page(str(error), 400, setup=setup)
+        except (OSError, KeyError, TypeError):
+            self.login_page("Sign-in unavailable. Check the local account configuration.", 503, setup=setup)
+
     def do_GET(self):
         path = unquote(urlsplit(self.path).path)
-        if not self.permitted(path.startswith("/api/")):
+        if not self.permitted():
+            return
+        if path in {"/login", "/setup"}:
+            setup = self.server.auth.needs_setup()
+            if setup != (path == "/setup"):
+                self.respond(303, "", "text/plain", {"Location": "/setup" if setup else "/login"})
+            else:
+                self.login_page(setup=setup)
+            return
+        if not self.authenticated(path) or not self.permitted(path.startswith("/api/")):
             return
         try:
             if path == "/":
-                page = dashboard.render(dashboard.collect(ROOT))
+                page = dashboard.render(self.server.collect(self.workspace))
                 config = json.dumps({"token": self.server.token}).replace("<", "\\u003c")
                 extra = '<script id="live-config" type="application/json">' + config + '</script><script src="/controls.js"></script>'
                 self.respond(200, page.replace("</body>", extra + "</body>"), "text/html; charset=utf-8")
+            elif path == "/professors/new":
+                self.respond(200, dashboard_accounts.render(self.server.token, mode="invite"), "text/html; charset=utf-8")
             elif path == "/controls.js":
                 self.respond(200, Path(__file__).with_name("dashboard_controls.js").read_bytes(), "text/javascript; charset=utf-8")
             elif path == "/api/state":
-                data = dashboard.collect(ROOT)
+                data = self.server.collect(self.workspace)
                 data["live"] = True
-                saved = roster.read(dashboard.ROSTER_FILE)
-                with self.server.jobs.lock:
-                    jobs = [self.server.jobs.public(j) for j in self.server.jobs.jobs.values()]
+                saved = roster.read(self.workspace.roster_file)
+                with self.workspace.lock:
+                    jobs = [self.workspace.public(j) for j in self.workspace.jobs.values()]
                 self.respond(200, {"data": data, "roster": saved, "jobs": jobs})
             else:
-                file = (ROOT / path.lstrip("/")).resolve()
-                allowed = any(file.is_relative_to(root.resolve()) for root in (REVIEWS, EVALUATIONS))
+                file = (self.workspace.root / path.lstrip("/")).resolve()
+                allowed = any(file.is_relative_to(root.resolve()) for root in (self.workspace.reviews, self.workspace.evaluations))
                 if allowed and file.is_file() and file.suffix in {".md", ".json", ".html"}:
                     self.respond(200, file.read_bytes(), mimetypes.guess_type(file.name)[0] or "text/plain")
                 else:
                     self.respond(404, {"error": "Not found"})
-        except (ValueError, OSError, SystemExit) as error:
+        except (ValueError, OSError, SystemExit, subprocess.SubprocessError) as error:
             self.respond(400, {"error": str(error)})
 
     def do_POST(self):
-        if not self.permitted(api=True):
+        path = urlsplit(self.path).path
+        if not self.permitted():
+            return
+        if path in {"/login", "/setup"}:
+            self.login(setup=path == "/setup")
+            return
+        if not self.authenticated(path) or not self.permitted(api=True):
             return
         try:
             length = int(self.headers.get("Content-Length", "0"))
@@ -334,19 +445,27 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(data, dict):
                 raise ValueError("Expected a JSON object")
             path = urlsplit(self.path).path
-            if path == "/api/provider-status":
+            if path == "/api/logout":
+                self.server.auth.logout(self.session())
+                self.respond(200, {"ok": True}, headers={"Set-Cookie":
+                    "professor_session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0" + self.server.cookie_security})
+            elif path == "/api/professors":
+                self.server.auth.create_account(data.get("username", ""), data.get("password", ""),
+                                                data.get("confirmation", ""))
+                self.respond(201, {"ok": True})
+            elif path == "/api/provider-status":
                 self.respond(200, provider_status(data))
             elif path == "/api/repos":
-                with self.server.jobs.lock:
-                    if self.server.jobs.active():
+                with self.workspace.lock:
+                    if self.workspace.active():
                         raise ValueError("Wait for the running job before changing the roster")
-                    entry = roster.add(dashboard.ROSTER_FILE, data.get("repo", ""),
-                                       data.get("student", ""), data.get("assignment", ""))
+                    entry = roster.add(self.workspace.roster_file, data.get("repo", ""),
+                                       data.get("student", ""), data.get("assignment", ""), data.get("branch", "main"))
                 self.respond(201, entry)
             elif path == "/api/jobs":
-                self.respond(202, self.server.jobs.start(data))
+                self.respond(202, self.workspace.start(data))
             elif path == "/api/stop":
-                self.respond(200, self.server.jobs.stop(data.get("id")))
+                self.respond(200, self.workspace.stop(data.get("id")))
             else:
                 self.respond(404, {"error": "Not found"})
         except (ValueError, TypeError, AttributeError, OSError, SystemExit) as error:
@@ -363,6 +482,7 @@ def serve(port=0, open_browser=True):
     except KeyboardInterrupt:
         pass
     finally:
-        for job in list(server.jobs.jobs.values()):
-            server.jobs.stop(job["id"])
+        for workspace in list(server.workspaces.values()):
+            for job in list(workspace.jobs.values()):
+                workspace.stop(job["id"])
         server.server_close()
