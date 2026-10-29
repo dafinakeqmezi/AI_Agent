@@ -54,7 +54,7 @@ python3 -m grader review-all --provider claude-code
 
 Optionally select a plan-supported model with `--model sonnet` or set
 `CLAUDE_CODE_MODEL`. The API setting `ANTHROPIC_MODEL` is not used for this provider.
-The runner needs a current Claude Code version supporting `--bare`, JSON schema
+The runner needs a current Claude Code version supporting `--disable-slash-commands`, JSON schema
 output, `auth status`, tool restrictions and no session persistence. Older
 versions fail explicitly; update instead of enabling permission bypass flags.
 

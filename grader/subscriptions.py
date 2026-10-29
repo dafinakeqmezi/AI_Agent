@@ -115,8 +115,9 @@ def child_environment():
 
 def execute(command, *, cwd, env, timeout, prompt=None):
     try:
-        return subprocess.run(command, input=prompt, text=True, capture_output=True,
-                              cwd=cwd, env=env, timeout=timeout, check=False)
+        # Explicit UTF-8: on Windows the default (cp1252) cannot encode prompts with e.g. "→" or "ë".
+        return subprocess.run(command, input=prompt, text=True, encoding="utf-8", errors="replace",
+                              capture_output=True, cwd=cwd, env=env, timeout=timeout, check=False)
     except subprocess.TimeoutExpired:
         raise RunnerError("Subscription CLI timed out; no API fallback was attempted. Increase --timeout if needed.") from None
     except OSError:
@@ -188,7 +189,9 @@ class SubscriptionCLI:
                 command.extend(["--model", self.model])
             command.append("-")
         else:
-            command = [self.binary, "--bare", "--setting-sources", "", "-p", "--output-format", "json",
+            # Not --bare: bare mode only accepts ANTHROPIC_API_KEY and never reads the subscription (OAuth) login.
+            # Isolation comes from no setting sources, no tools/MCP/skills and a throwaway working directory.
+            command = [self.binary, "--setting-sources", "", "--disable-slash-commands", "-p", "--output-format", "json",
                        "--no-session-persistence", "--tools", "", "--disallowedTools", "mcp__*",
                        "--strict-mcp-config", "--mcp-config", '{"mcpServers":{}}',
                        "--max-turns", "3", "--json-schema", json.dumps(ACTION_SCHEMA)]

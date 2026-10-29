@@ -15,6 +15,15 @@ from grader import cli, common, freeze, runner, score, state
 from grader.common import assignment_files, load_json, write_json
 
 
+def symlink(link, target):
+    """Create a symlink, or return False where the OS refuses (Windows without Developer Mode)."""
+    try:
+        link.symlink_to(target)
+        return True
+    except OSError:
+        return False
+
+
 def call(name, **arguments):
     return {"type": "function_call", "call_id": "call-test", "name": name,
             "arguments": json.dumps(arguments)}
@@ -98,7 +107,7 @@ class RunnerTests(unittest.TestCase):
     def test_scoped_files_block_traversal_symlinks_and_allow_pagination(self):
         secret = self.root / "secret.txt"
         secret.write_text("not mounted")
-        (self.project / "link.txt").symlink_to(secret)
+        linked = symlink(self.project / "link.txt", secret)
         files = runner.Files()
         files.mount("project", self.project)
         self.assertNotIn("project/link.txt", files.paths)
@@ -109,6 +118,8 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(data["text"], "L2: two")
         self.assertEqual(data["next_line"], 3)
         # A file replaced with an external symlink after mounting is rejected too.
+        if not linked:
+            self.skipTest("symlinks are not permitted here; traversal and pagination were checked")
         (self.project / "README.md").unlink()
         (self.project / "README.md").symlink_to(secret)
         with self.assertRaises(ValueError):

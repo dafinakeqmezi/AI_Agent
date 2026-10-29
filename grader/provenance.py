@@ -72,6 +72,20 @@ def observe(submission, path, digest, matcher=None):
     return result
 
 
+def _frozen_lf(submission, path):
+    """The frozen file's bytes with LF line endings, or None (no frozen copy, unsafe path, too large)."""
+    root = submission.get("files_dir")
+    if not root or Path(path).is_absolute() or ".." in PurePosixPath(path).parts:
+        return None
+    try:
+        p = Path(root) / path
+        if p.stat().st_size > 256_000:
+            return None
+        return p.read_bytes().replace(b"\r\n", b"\n")
+    except OSError:
+        return None
+
+
 def compare(a, b, files, fragments=(), cfg=None):
     observations = []
     counts = {"A_EARLIER": 0, "B_EARLIER": 0, "SAME_RECORDED_TIME": 0, "UNKNOWN": 0}
@@ -80,6 +94,11 @@ def compare(a, b, files, fragments=(), cfg=None):
         matcher = None
         if kind == "EXACT_FILE":
             digest = a["files"][item["file_a"]]["sha256"]
+            frozen = _frozen_lf(a, item["file_a"])
+            if frozen is not None:
+                # Same content up to line endings: with core.autocrlf the checkout has CRLF, the blob LF.
+                def matcher(raw, frozen=frozen):
+                    return raw.replace(b"\r\n", b"\n") == frozen
         else:
             from .similarity import code_tokens, winnow
             wanted = item["fingerprints"]

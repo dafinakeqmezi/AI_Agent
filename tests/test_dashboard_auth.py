@@ -1,5 +1,6 @@
 """Credentials, password resets, session expiry, and sign-in throttling."""
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -18,7 +19,8 @@ class AuthTests(unittest.TestCase):
 
     def test_passwords_are_hashed_and_file_is_private(self):
         self.assertNotIn("fixture-password", self.path.read_text())
-        self.assertEqual(self.path.stat().st_mode & 0o777, 0o600)
+        if os.name != "nt":  # Windows has no POSIX permission bits; os.open's mode is ignored there
+            self.assertEqual(self.path.stat().st_mode & 0o777, 0o600)
         with self.assertRaises(ValueError):
             auth.set_password("other", "short", self.path)
         token = self.auth.login("PROFESSOR", "fixture-password-123")

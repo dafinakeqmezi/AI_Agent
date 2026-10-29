@@ -187,7 +187,7 @@ def load_submission(sid: str, cfg: dict) -> dict:
             "code": dict(code_fp), "docs": dict(doc_fp), "lines": lines_cache,
             "files": {f["path"]: f for f in manifest.get("files", [])},
             "commits": hist.get("commits") or [], "authors": hist.get("authors") or [],
-            "source_path": sub.get("source_path")}
+            "source_path": sub.get("source_path"), "files_dir": str(files_dir)}
 
 
 def _base_fingerprints(base: Path | None, cfg: dict) -> set[int]:

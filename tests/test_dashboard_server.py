@@ -292,7 +292,10 @@ class DashboardHTTPTests(unittest.TestCase):
         other = self.server.workspace("second")
         target = other.reviews / "leak.md"
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.symlink_to(report)
+        try:
+            target.symlink_to(report)
+        except OSError:
+            pass  # Windows without Developer Mode cannot create the link; the path is then simply absent
         self.assertEqual(self.request("GET", "/reviews/leak.md")[0], 404)
         relative = "/../" + self.jobs.root.name + "/reviews/private-project/run/review.md"
         self.assertEqual(self.request("GET", relative)[0], 404)

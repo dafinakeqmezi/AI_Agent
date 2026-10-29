@@ -67,7 +67,8 @@ class SubscriptionTests(unittest.TestCase):
         self.assertIn("chosen-model", codex)
         claude = self.provider("claude-code").command(self.root)
         self.assertEqual(claude[claude.index("--tools") + 1], "")
-        self.assertIn("--bare", claude)
+        self.assertNotIn("--bare", claude)  # bare mode ignores the subscription login
+        self.assertIn("--disable-slash-commands", claude)
         self.assertIn("--no-session-persistence", claude)
         self.assertIn("--strict-mcp-config", claude)
         self.assertNotIn("--model", claude)
@@ -140,8 +141,8 @@ class SubscriptionTests(unittest.TestCase):
         lines = [f'value_{i} = "α\\β"' for i in range(90)]
         text = "\n".join(lines) + "\n"
         for name in ("first.py", "same.py"):
-            (project / name).write_text(text)
-        (project / "changed.py").write_text(text + "different = True\n")
+            (project / name).write_text(text, encoding="utf-8")
+        (project / "changed.py").write_text(text + "different = True\n", encoding="utf-8")
         files = runner.Files()
         files.mount("project", project)
         packet, _ = runner.prefetch(files, "detyra1")
@@ -268,7 +269,10 @@ class SubscriptionTests(unittest.TestCase):
         (project / "README.md").write_text("Student evidence")
         outside = self.root / "review.json"
         outside.write_text("Private Agent 1 conclusion")
-        (project / "linked.txt").symlink_to(outside)
+        try:
+            (project / "linked.txt").symlink_to(outside)
+        except OSError:
+            pass  # Windows without Developer Mode: no symlink, the bound and mount checks still apply
         files = runner.Files()
         files.mount("project", project)
         packet, size = runner.prefetch(files, "detyra1", budget=500)

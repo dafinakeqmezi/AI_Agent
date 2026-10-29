@@ -178,8 +178,9 @@ class Jobs:
                     with self.lock:
                         if job["cancel"].is_set():
                             break
-                        process = subprocess.Popen(command, cwd=ROOT, env=self.env, stdout=subprocess.PIPE,
-                                                   stderr=subprocess.STDOUT, text=True, bufsize=1,
+                        process = subprocess.Popen(command, cwd=ROOT, env={**self.env, "PYTHONIOENCODING": "utf-8"},
+                                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1,
+                                                   encoding="utf-8", errors="replace",
                                                    start_new_session=os.name != "nt")
                         job["process"] = process
                     for line in process.stdout:
