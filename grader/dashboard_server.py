@@ -20,12 +20,13 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlsplit, parse_qs
 
-from . import dashboard, dashboard_accounts, dashboard_auth, github, roster
+from . import cli_logins, dashboard, dashboard_accounts, dashboard_auth, github, roster
 from .common import ROOT, REVIEWS, EVALUATIONS, SUBMISSIONS, assignment_files, load_json, now_iso, write_json
 
 
-def provider_status(data):
-    """Check local configuration/sign-in only; never request an inference."""
+def provider_status(data, env=None):
+    """Check local configuration/sign-in only; never request an inference.
+    `env` is a professor workspace environment: subscription checks then use that professor's own sign-in."""
     from . import runner
     name = data.get("provider")
     if name not in {"chatgpt", "claude-code", "openai", "claude"}:
@@ -36,9 +37,12 @@ def provider_status(data):
     args = SimpleNamespace(provider=name, model=model.strip() or None, timeout=30)
     args.model = runner.model_for(args)
     try:
-        runner.create_provider(args)
+        runner.create_provider(args, env=env)
     except runner.RunnerError as error:
-        return {"ready": False, "message": str(error)}
+        message = str(error)
+        if env is not None and name in {"chatgpt", "claude-code"} and "Install" not in message:
+            message = "Connect your own subscription under Subscriptions in this dashboard."
+        return {"ready": False, "message": message}
     message = ("CLI installed and signed in. Model access is checked when you run."
                if name in {"chatgpt", "claude-code"} else
                "API key and model configured. Credentials and model access are checked when you run.")
@@ -60,6 +64,11 @@ class Jobs:
         self.reviews = self.root / "reviews" if root is not None else REVIEWS
         self.evaluations = self.root / "evaluations" if root is not None else EVALUATIONS
         self.env = dict(os.environ, GRADER_DATA_ROOT=str(self.root))
+        # A professor workspace signs in to Claude Code / Codex with its own CLI homes.
+        self.logins = None
+        if root is not None:
+            self.env.update(cli_logins.environment(self.root))
+            self.logins = cli_logins.Logins(self.env)
         self.lock = threading.RLock()
         self.jobs = {}
 
@@ -412,6 +421,11 @@ class Handler(BaseHTTPRequestHandler):
                 self.respond(200, dashboard_accounts.render(self.server.token, mode="invite"), "text/html; charset=utf-8")
             elif path == "/controls.js":
                 self.respond(200, Path(__file__).with_name("dashboard_controls.js").read_bytes(), "text/javascript; charset=utf-8")
+            elif path == "/api/subscriptions":
+                if not self.workspace.logins:
+                    raise ValueError("Subscriptions are managed per professor workspace")
+                check = parse_qs(urlsplit(self.path).query).get("check", ["1"])[0] != "0"
+                self.respond(200, self.workspace.logins.status(check=check))
             elif path == "/api/state":
                 data = self.server.collect(self.workspace)
                 data["live"] = True
@@ -455,7 +469,24 @@ class Handler(BaseHTTPRequestHandler):
                                                 data.get("confirmation", ""))
                 self.respond(201, {"ok": True})
             elif path == "/api/provider-status":
-                self.respond(200, provider_status(data))
+                self.respond(200, provider_status(data, self.workspace.env))
+            elif path.startswith("/api/subscriptions/"):
+                logins = self.workspace.logins
+                if not logins:
+                    raise ValueError("Subscriptions are managed per professor workspace")
+                action, tool = path.rsplit("/", 1)[1], data.get("tool")
+                if action in {"login", "logout"} and self.workspace.active():
+                    raise ValueError("Wait for the running job before changing a subscription")
+                if action == "login":
+                    self.respond(200, logins.start(tool))
+                elif action == "code":
+                    self.respond(200, logins.submit_code(tool, data.get("code")))
+                elif action == "cancel":
+                    self.respond(200, logins.cancel(tool))
+                elif action == "logout":
+                    self.respond(200, logins.logout(tool))
+                else:
+                    self.respond(404, {"error": "Not found"})
             elif path == "/api/repos":
                 with self.workspace.lock:
                     if self.workspace.active():
@@ -486,4 +517,6 @@ def serve(port=0, open_browser=True):
         for workspace in list(server.workspaces.values()):
             for job in list(workspace.jobs.values()):
                 workspace.stop(job["id"])
+            if workspace.logins:
+                workspace.logins.close()
         server.server_close()

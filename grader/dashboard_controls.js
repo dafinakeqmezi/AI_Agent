@@ -30,6 +30,10 @@
       #live-controls button:disabled {opacity:.45;cursor:default}
       #live-log {white-space:pre-wrap;max-height:280px;overflow:auto;background:var(--surface-2);padding:12px;border-radius:8px;font-size:12px}
       #live-error {color:var(--danger,#b42318);white-space:pre-wrap;margin:8px 0}
+      #live-controls .sub {border-top:1px solid var(--border);padding:10px 0}
+      #live-controls .sub ol {margin:8px 0;padding-left:20px;font-size:13px}
+      #live-controls .sub code {font-size:15px;font-weight:600;letter-spacing:1px}
+      #live-controls .sub a {overflow-wrap:anywhere}
     </style>
     <div id="live-controls">
       <details>
@@ -61,8 +65,13 @@
       <div class="secondary">
         <p id="live-provider-status" class="small" role="status" aria-live="polite">Checking provider…</p>
         <button id="live-check-provider" class="btn" type="button">Check provider again</button>
-        <p class="small muted">Choose a provider, then select repositories and click Review. Sign in from your terminal; this menu does not open login.</p>
+        <p class="small muted">Choose a provider, then select repositories and click Review. Subscription runs use the account you connect under Subscriptions.</p>
       </div>
+      <details id="live-subscriptions" class="secondary"><summary>Subscriptions (your own accounts)</summary>
+        <p class="small muted">Connect your own Claude (Pro/Max) or ChatGPT plan. Reviews and grades you start use only your connected account; other professors cannot use it. Sign-in happens on Anthropic's or OpenAI's website.</p>
+        <div id="live-sub-claude" class="sub"></div>
+        <div id="live-sub-codex" class="sub"></div>
+      </details>
       <p id="live-scope" class="small muted"></p>
       <div class="buttons"><button id="live-review" class="btn">Review selected repositories</button></div>
       <details class="secondary"><summary>Freeze repositories for grading</summary>
@@ -207,6 +216,82 @@
     try { if (latestJob) await api("/api/stop", {id: latestJob.id}); await refresh(); }
     catch (error) { el("error").textContent = error.message; }
   };
+  const SUBS = {claude: "Claude subscription (Pro/Max) · Claude Code", codex: "ChatGPT subscription · Codex"};
+  let subState = {}, subPoll = null;
+  const node = (tag, text, attrs) => {
+    const n = document.createElement(tag);
+    if (text) n.textContent = text;
+    Object.assign(n, attrs || {});
+    return n;
+  };
+  function renderSub(tool) {
+    const s = subState[tool] || {}, login = s.login || {}, box = el("sub-" + tool);
+    const signature = JSON.stringify(s);
+    if (box.dataset.signature === signature) return;  // keeps a half-pasted code while polling
+    box.dataset.signature = signature;
+    const status = s.connected === true ? "Connected" : s.connected === false ? "Not connected" : "Checking…";
+    box.replaceChildren(node("b", SUBS[tool]), document.createTextNode(" · " + status));
+    if (login.state === "waiting") {
+      const steps = node("ol");
+      const open = node("li", "Open ");
+      if (login.url) open.append(node("a", login.url, {href: login.url, target: "_blank", rel: "noopener noreferrer"}));
+      else open.append("the sign-in page (link loading…)");
+      open.append(" and sign in with your own account.");
+      steps.append(open);
+      if (tool === "codex") {
+        const step = node("li", "Enter this one-time code: ");
+        step.append(node("code", login.code || "…"));
+        steps.append(step, node("li", "This page updates by itself when the sign-in finishes."));
+        box.append(steps, button("Cancel", () => subAction("cancel", tool)));
+      } else {
+        steps.append(node("li", "Copy the code Anthropic shows after signing in and paste it here:"));
+        const input = node("input", "", {placeholder: "Paste the code", autocomplete: "off"});
+        input.id = "live-sub-code";
+        box.append(steps, input, node("div", "", {className: "buttons"}));
+        box.lastChild.append(button("Finish sign-in", () => subAction("code", tool, {code: input.value.trim()})),
+                             button("Cancel", () => subAction("cancel", tool)));
+      }
+      return;
+    }
+    if (login.state === "failed") box.append(node("p", "Sign-in failed: " + (login.message || "try again."), {className: "small"}));
+    else if (s.connected === false && s.message) box.append(node("p", s.message, {className: "small muted"}));
+    const buttons = node("div", "", {className: "buttons"});
+    if (s.connected) buttons.append(button("Disconnect", () => subAction("logout", tool)));
+    else buttons.append(button("Connect", () => subAction("login", tool)));
+    box.append(buttons);
+  }
+  function button(text, onclick) {
+    const b = node("button", text, {type: "button", className: "btn"});
+    b.onclick = async () => { b.disabled = true; try { await onclick(); } finally { b.disabled = false; } };
+    return b;
+  }
+  async function loadSubs(check) {
+    try {
+      const result = await api("/api/subscriptions" + (check ? "" : "?check=0"));
+      Object.keys(SUBS).forEach(tool => {
+        const before = subState[tool] || {};
+        subState[tool] = result[tool];
+        if (!check && before.connected !== undefined) subState[tool].connected = before.connected;
+        renderSub(tool);
+        if ((before.login || {}).state === "waiting" && result[tool].login.state === "done") { loadSubs(true); checkProvider(); }
+      });
+      const waiting = Object.values(result).some(s => s.login.state === "waiting");
+      if (waiting && !subPoll) subPoll = setInterval(() => loadSubs(false), 3000);
+      if (!waiting && subPoll) { clearInterval(subPoll); subPoll = null; }
+    } catch (error) { el("error").textContent = error.message; }
+  }
+  async function subAction(action, tool, extra) {
+    el("error").textContent = "";
+    try {
+      const result = await api("/api/subscriptions/" + action, Object.assign({tool}, extra || {}));
+      if (action === "logout") subState[tool] = result;
+      else subState[tool] = Object.assign({}, subState[tool], {login: result});
+      renderSub(tool);
+      if (action === "code" || action === "logout") { await loadSubs(true); checkProvider(); }
+      else await loadSubs(false);
+    } catch (error) { el("error").textContent = error.message; }
+  }
+  el("subscriptions").ontoggle = () => { if (el("subscriptions").open) loadSubs(true); };
   el("provider").onchange = checkProvider;
   el("check-provider").onclick = checkProvider;
   el("model").oninput = () => {

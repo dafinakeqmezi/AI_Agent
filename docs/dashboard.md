@@ -79,8 +79,9 @@ existing professor account, preventing public first-account registration.
 Run a **single server process**: sessions and job tracking are in memory. A restart
 requires signing in again. This change prepares account isolation and proxy
 configuration; it does not deploy a server, set up TLS, or provide high availability.
-Provider credentials and CLI sign-ins remain configured by the server operator;
-separate professor model accounts and billing are not implemented.
+Subscription sign-ins are per professor (see **Subscriptions** below). The server
+operator installs the `claude` and `codex` CLIs; API keys for the API providers
+remain configured by the operator and are shared.
 
 ## Review repositories
 
@@ -109,8 +110,9 @@ This bounds model calls, not total job duration or token consumption. If a revie
 runs out of calls before producing valid output, its job log reports the failure;
 you can raise the limit and start another run.
 
-Sign in to the official CLI before using a subscription provider. For API
-providers, set credentials and the model in the server's terminal environment.
+Connect a subscription under **Subscriptions** before using a subscription
+provider. For API providers, set credentials and the model in the server's
+terminal environment.
 See [subscription setup](subscriptions.md) and [API runner setup](automated-runner.md).
 The dashboard does not accept API keys. Provider and model choices apply to
 new runs; they do not change existing results.
@@ -118,9 +120,30 @@ new runs; they do not change existing results.
 Choosing a provider checks its local setup and displays **Ready** or **Setup
 needed** with installation/sign-in instructions. This check makes no model call.
 Review and grading buttons stay disabled until setup passes; freezing and
-comparison remain available. Sign in from your terminal, then click **Check
+comparison remain available. Connect the subscription, then click **Check
 provider again**. For API providers the check confirms configuration only;
 credentials and model availability are verified during the actual run.
+
+### Subscriptions
+
+Each professor connects their own Claude (Pro/Max) and/or ChatGPT plan under
+**Subscriptions (your own accounts)**. Reviews and grades a professor starts run
+only on that professor's connected account; no professor can use another's, and
+the operator's own terminal sign-in is never used by the dashboard.
+
+- **Claude:** click **Connect**, open the link, sign in on Anthropic's site, copy
+  the code it shows and paste it into **Finish sign-in**.
+- **ChatGPT (Codex):** click **Connect**, open the link and enter the one-time code.
+  The page updates when the sign-in finishes.
+- **Disconnect** signs that account out of the server.
+
+Sign-ins are the CLIs' own flows (`claude auth login`, `codex login --device-auth`).
+Their credentials are stored by the CLIs in the professor's workspace
+(`state/professor-data/<account-id>/cli/claude` and `.../cli/codex`), which the
+dashboard never reads. Anyone with access to the server's files can read them:
+protect the server like the student data it holds. The sign-in link and code are
+kept in memory, shown only to the professor who started the sign-in, and expire
+after 15 minutes.
 
 ## Freeze, grade and compare
 

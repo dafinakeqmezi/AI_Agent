@@ -229,7 +229,7 @@ class SubscriptionTests(unittest.TestCase):
             self.assertEqual(runner.model_for(Namespace(provider="claude-code", model=None)), "plan2")
         with patch.object(subscriptions, "SubscriptionCLI") as constructor:
             runner.create_provider(Namespace(provider="chatgpt", model=None, timeout=30))
-            constructor.assert_called_once_with("chatgpt", None, 30)
+            constructor.assert_called_once_with("chatgpt", None, 30, env=None)
 
     def test_complete_review_with_subscription_transport(self):
         project = self.root / "project"

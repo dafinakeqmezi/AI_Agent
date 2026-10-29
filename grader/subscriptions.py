@@ -102,9 +102,10 @@ def inference_prompt(instructions, messages, tools):
     return "\n\n".join(parts)
 
 
-def child_environment():
-    """Do not change the user's shell; prevent environment-based API billing in children."""
-    env = os.environ.copy()
+def child_environment(base=None):
+    """Do not change the user's shell; prevent environment-based API billing in children.
+    `base` (default os.environ) may carry CLAUDE_CONFIG_DIR / CODEX_HOME for a professor's own sign-in."""
+    env = dict(os.environ if base is None else base)
     for key in ("OPENAI_API_KEY", "CODEX_API_KEY", "OPENAI_BASE_URL", "OPENAI_API_BASE",
                 "ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_BASE_URL",
                 "CLAUDE_CODE_OAUTH_TOKEN", "CLAUDE_CODE_USE_BEDROCK", "CLAUDE_CODE_USE_VERTEX",
@@ -126,7 +127,7 @@ def execute(command, *, cwd, env, timeout, prompt=None):
 
 class SubscriptionCLI:
     """Each inference is an ephemeral, tool-free process; Python dispatches scoped actions."""
-    def __init__(self, name, model=None, timeout=120):
+    def __init__(self, name, model=None, timeout=120, env=None):
         self.name = name
         self.binary_name = "codex" if name == "chatgpt" else "claude"
         self.binary = shutil.which(self.binary_name)
@@ -134,7 +135,7 @@ class SubscriptionCLI:
             raise RunnerError(f"Install {self.binary_name} CLI and sign in with your subscription first. See docs/subscriptions.md.")
         self.model = model or "cli-default"
         self.timeout = timeout
-        self.env = child_environment()
+        self.env = child_environment(env)
         self._phase_directory = None
         self.check_auth()
 

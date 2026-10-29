@@ -142,10 +142,10 @@ def model_for(args):
     return args.model or os.environ.get(variable)
 
 
-def create_provider(args):
+def create_provider(args, env=None):
     if args.provider in {"chatgpt", "claude-code"}:
         from .subscriptions import SubscriptionCLI
-        return SubscriptionCLI(args.provider, args.model, args.timeout)
+        return SubscriptionCLI(args.provider, args.model, args.timeout, env=env)
     if args.provider == "claude":
         return Claude(args.model, args.timeout)
     if args.provider == "openai":
